@@ -30,6 +30,7 @@ import java.util.Map;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.basicstorage.DataStorageException;
 import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
@@ -47,6 +48,10 @@ public class AlvinExtendedFunctionalityProviderTest {
 		initInfo.put("messageServerPort", "somePort");
 		initInfo.put("messageChannel", "someChannel");
 
+		setUpFunctionalityProvider();
+	}
+
+	private void setUpFunctionalityProvider() {
 		dependencyProvider = new DependencyProviderSpy(initInfo);
 		RecordStorageProviderSpy storageProvider = new RecordStorageProviderSpy();
 		dependencyProvider.setRecordStorageProvider(storageProvider);
@@ -98,6 +103,50 @@ public class AlvinExtendedFunctionalityProviderTest {
 		assertEquals(channelInfo.hostname, initInfo.get("messageServerHostname"));
 		assertEquals(channelInfo.port, initInfo.get("messageServerPort"));
 		assertEquals(channelInfo.channel, initInfo.get("messageChannel"));
+	}
+
+	// @Test
+	// public void testLoggingAndErrorIfMissingParameterMessageServerHostname() {
+	// initInfo.remove("messageServerHostname");
+	// setUpFunctionalityProvider();
+	// try {
+	// List<ExtendedFunctionality> functionalityList = functionalityProvider
+	// .getFunctionalityForCreateBeforeReturn("place");
+	// } catch (Exception e) {
+	//
+	// }
+	// assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
+	// "AlvinMixedRecordStorageProvider starting AlvinMixedRecordStorage...");
+	// assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName), 1);
+	// assertEquals(loggerFactorySpy.getFatalLogMessageUsingClassNameAndNo(testedClassName, 0),
+	// "InitInfo must contain storageOnDiskBasePath");
+	// assertEquals(loggerFactorySpy.getNoOfFatalLogMessagesUsingClassName(testedClassName), 1);
+	// }
+
+	@Test
+	public void testLoggingAndErrorIfMissingParameterMessageServerHostname() {
+		assertCorrectErrorAndLogOnMissingParameter("messageServerHostname", 3);
+	}
+
+	private void assertCorrectErrorAndLogOnMissingParameter(String parameter,
+			int noOfInfoMessages) {
+		initInfo.remove(parameter);
+		setUpFunctionalityProvider();
+		String errorMessage = "InitInfo must contain " + parameter;
+		try {
+			functionalityProvider.getFunctionalityForCreateBeforeReturn("place");
+		} catch (Exception e) {
+			assertTrue(e instanceof DataStorageException);
+			assertEquals(e.getMessage(), errorMessage);
+
+		}
+		// assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
+		// "AlvinMixedRecordStorageProvider starting AlvinMixedRecordStorage...");
+		// assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName),
+		// noOfInfoMessages);
+		// assertEquals(loggerFactorySpy.getFatalLogMessageUsingClassNameAndNo(testedClassName, 0),
+		// errorMessage);
+		// assertEquals(loggerFactorySpy.getNoOfFatalLogMessagesUsingClassName(testedClassName), 1);
 	}
 
 }
