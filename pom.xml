@@ -29,7 +29,7 @@
 		<!-- compile -->
 		<therest.version>2.6.0</therest.version>
 		<alvinmixedstorage.version>1.11.0</alvinmixedstorage.version>
-		
+		<messaging.version>1.0-SNAPSHOT</messaging.version>
 		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
 		<jersey.version>2.27</jersey.version>
 		
@@ -62,6 +62,11 @@
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>alvinmixedstorage</artifactId>
 			<version>${alvinmixedstorage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>messaging</artifactId>
+			<version>${messaging.version}</version>
 		</dependency>
 		
 		<dependency>

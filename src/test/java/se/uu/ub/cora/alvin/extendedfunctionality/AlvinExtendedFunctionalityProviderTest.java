@@ -71,4 +71,14 @@ public class AlvinExtendedFunctionalityProviderTest {
 		assertEquals(functionalityProvider.ensureListExists(list), list);
 	}
 
+	@Test
+	public void testFunctionalityForCreateBeforeReturnForPlace() {
+		List<ExtendedFunctionality> functionalityList = functionalityProvider
+				.getFunctionalityForCreateBeforeReturn("place");
+
+		assertEquals(functionalityList.size(), 1);
+		assertTrue(functionalityList.get(0) instanceof AlvinRecordIndexer);
+
+	}
+
 }

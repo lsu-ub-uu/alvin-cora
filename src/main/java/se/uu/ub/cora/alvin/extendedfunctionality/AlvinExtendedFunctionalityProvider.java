@@ -35,6 +35,17 @@ public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunct
 	}
 
 	@Override
+	public List<ExtendedFunctionality> getFunctionalityForCreateBeforeReturn(String recordType) {
+		List<ExtendedFunctionality> list = super.getFunctionalityForCreateBeforeReturn(recordType);
+		if (PLACE.equals(recordType)) {
+			list = ensureListExists(list);
+			list.add(new AlvinRecordIndexer());
+		}
+
+		return list;
+	}
+
+	@Override
 	public List<ExtendedFunctionality> getFunctionalityBeforeDelete(String recordType) {
 		List<ExtendedFunctionality> list = super.getFunctionalityForCreateBeforeMetadataValidation(
 				recordType);
