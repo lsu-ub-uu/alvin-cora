@@ -26,12 +26,22 @@ import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 
 public class AlvinRecordIndexer implements ExtendedFunctionality {
 
+	private ChannelInfo channelInfo;
+
+	public AlvinRecordIndexer(ChannelInfo channelInfo) {
+		this.channelInfo = channelInfo;
+	}
+
 	@Override
 	public void useExtendedFunctionality(String authToken, SpiderDataGroup spiderDataGroup) {
-		ChannelInfo channelInfo = new ChannelInfo("", "", "");
 
 		MessageSender messageSender = MessagingProvider.getTopicMessageSender(channelInfo);
 		messageSender.sendMessage();
+	}
+
+	ChannelInfo getChannelInfo() {
+		// needed for test
+		return channelInfo;
 	}
 
 }

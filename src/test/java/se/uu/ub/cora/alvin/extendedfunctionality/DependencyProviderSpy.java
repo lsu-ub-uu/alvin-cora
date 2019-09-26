@@ -20,13 +20,13 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 
 import java.util.Map;
 
+import se.uu.ub.cora.alvin.AlvinDependencyProvider;
 import se.uu.ub.cora.search.RecordIndexer;
 import se.uu.ub.cora.search.RecordSearch;
 import se.uu.ub.cora.spider.authentication.Authenticator;
-import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionalityProvider;
 
-public class DependencyProviderSpy extends SpiderDependencyProvider {
+public class DependencyProviderSpy extends AlvinDependencyProvider {
 
 	public DependencyProviderSpy(Map<String, String> initInfo) {
 		super(initInfo);
@@ -34,7 +34,7 @@ public class DependencyProviderSpy extends SpiderDependencyProvider {
 	}
 
 	@Override
-	protected void tryToInitialize() throws Exception {
+	protected void tryToInitialize() {
 		// TODO Auto-generated method stub
 
 	}

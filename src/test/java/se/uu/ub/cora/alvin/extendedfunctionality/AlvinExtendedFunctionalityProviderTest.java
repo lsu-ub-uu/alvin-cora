@@ -25,10 +25,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 
@@ -36,10 +38,16 @@ public class AlvinExtendedFunctionalityProviderTest {
 
 	private AlvinExtendedFunctionalityProvider functionalityProvider;
 	private SpiderDependencyProvider dependencyProvider;
+	private Map<String, String> initInfo;
 
 	@BeforeMethod
 	public void setUp() {
-		dependencyProvider = new DependencyProviderSpy(new HashMap<>());
+		initInfo = new HashMap<>();
+		initInfo.put("messageServerHostname", "someHostname");
+		initInfo.put("messageServerPort", "somePort");
+		initInfo.put("messageChannel", "someChannel");
+
+		dependencyProvider = new DependencyProviderSpy(initInfo);
 		RecordStorageProviderSpy storageProvider = new RecordStorageProviderSpy();
 		dependencyProvider.setRecordStorageProvider(storageProvider);
 		functionalityProvider = new AlvinExtendedFunctionalityProvider(dependencyProvider);
@@ -72,13 +80,24 @@ public class AlvinExtendedFunctionalityProviderTest {
 	}
 
 	@Test
+	public void testFunctionalityForCreateBeforeReturnWhenNotImplementedForRecordType() {
+		List<ExtendedFunctionality> functionalityList = functionalityProvider
+				.getFunctionalityForCreateBeforeReturn("someRecordType");
+		assertEquals(functionalityList, Collections.emptyList());
+	}
+
+	@Test
 	public void testFunctionalityForCreateBeforeReturnForPlace() {
 		List<ExtendedFunctionality> functionalityList = functionalityProvider
 				.getFunctionalityForCreateBeforeReturn("place");
 
 		assertEquals(functionalityList.size(), 1);
 		assertTrue(functionalityList.get(0) instanceof AlvinRecordIndexer);
-
+		AlvinRecordIndexer alvinRecordIndexer = (AlvinRecordIndexer) functionalityList.get(0);
+		ChannelInfo channelInfo = alvinRecordIndexer.getChannelInfo();
+		assertEquals(channelInfo.hostname, initInfo.get("messageServerHostname"));
+		assertEquals(channelInfo.port, initInfo.get("messageServerPort"));
+		assertEquals(channelInfo.channel, initInfo.get("messageChannel"));
 	}
 
 }

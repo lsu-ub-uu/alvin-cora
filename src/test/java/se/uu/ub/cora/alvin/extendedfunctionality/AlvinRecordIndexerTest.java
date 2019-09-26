@@ -24,6 +24,7 @@ import static org.testng.Assert.assertTrue;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.messaging.MessagingProvider;
 import se.uu.ub.cora.spider.data.SpiderDataGroup;
 
@@ -31,26 +32,36 @@ public class AlvinRecordIndexerTest {
 
 	private MessagingFactorySpy messagingFactory;
 	private AlvinRecordIndexer indexer;
+	private ChannelInfo channelInfo;
 
 	@BeforeMethod
 	public void setUp() {
 		messagingFactory = new MessagingFactorySpy();
 		MessagingProvider.setMessagingFactory(messagingFactory);
-		indexer = new AlvinRecordIndexer();
+
+		channelInfo = new ChannelInfo("someHostname", "somePort", "someChannel");
+		indexer = new AlvinRecordIndexer(channelInfo);
 	}
 
 	@Test
 	public void testExtendedFunctionality() {
 		SpiderDataGroup dataGroup = SpiderDataGroup.withNameInData("someDataGroup");
 		indexer.useExtendedFunctionality("someAuthToken", dataGroup);
+
 		assertTrue(messagingFactory.factorMessageSenderWasCalled);
 		MessageSenderSpy messageSenderSpy = messagingFactory.messageSenderSpy;
 		assertTrue(messageSenderSpy.sendMessageWasCalled);
 
-		// TODO: var ska hostname etc komma ifrån??
-		assertEquals(messagingFactory.channelInfo.hostname, "");
-		assertEquals(messagingFactory.channelInfo.port, "");
-		assertEquals(messagingFactory.channelInfo.channel, "");
+		assertEquals(messagingFactory.channelInfo.hostname, channelInfo.hostname);
+		assertEquals(messagingFactory.channelInfo.port, channelInfo.port);
+		assertEquals(messagingFactory.channelInfo.channel, channelInfo.channel);
+	}
 
+	@Test
+	public void testGetChannelInfo() {
+		ChannelInfo requestedChannelInfo = indexer.getChannelInfo();
+		assertEquals(requestedChannelInfo.hostname, channelInfo.hostname);
+		assertEquals(requestedChannelInfo.port, channelInfo.port);
+		assertEquals(requestedChannelInfo.channel, channelInfo.channel);
 	}
 }

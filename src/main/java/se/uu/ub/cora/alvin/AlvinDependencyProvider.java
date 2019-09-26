@@ -35,4 +35,8 @@ public class AlvinDependencyProvider extends TheRestDependencyProvider {
 		return new AlvinExtendedFunctionalityProvider(this);
 	}
 
+	public Map<String, String> getInitInfo() {
+		return initInfo;
+	}
+
 }

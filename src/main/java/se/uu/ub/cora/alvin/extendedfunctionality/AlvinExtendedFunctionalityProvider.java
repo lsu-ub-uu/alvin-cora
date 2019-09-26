@@ -21,7 +21,10 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import se.uu.ub.cora.alvin.AlvinDependencyProvider;
+import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.metacreator.extended.MetacreatorExtendedFunctionalityProvider;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
@@ -39,10 +42,20 @@ public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunct
 		List<ExtendedFunctionality> list = super.getFunctionalityForCreateBeforeReturn(recordType);
 		if (PLACE.equals(recordType)) {
 			list = ensureListExists(list);
-			list.add(new AlvinRecordIndexer());
+			ChannelInfo channelInfo = createChannelInfo();
+			list.add(new AlvinRecordIndexer(channelInfo));
 		}
 
 		return list;
+	}
+
+	private ChannelInfo createChannelInfo() {
+		AlvinDependencyProvider alvinDependenProvider = (AlvinDependencyProvider) dependencyProvider;
+		Map<String, String> initInfo = alvinDependenProvider.getInitInfo();
+		String hostname = initInfo.get("messageServerHostname");
+		String port = initInfo.get("messageServerPort");
+		String channel = initInfo.get("messageChannel");
+		return new ChannelInfo(hostname, port, channel);
 	}
 
 	@Override
