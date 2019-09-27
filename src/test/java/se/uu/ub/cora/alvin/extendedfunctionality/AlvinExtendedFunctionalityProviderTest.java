@@ -30,7 +30,7 @@ import java.util.Map;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.alvin.mixedstorage.fedora.FedoraException;
+import se.uu.ub.cora.alvin.AlvinInitializationException;
 import se.uu.ub.cora.logger.LoggerProvider;
 import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
@@ -123,8 +123,7 @@ public class AlvinExtendedFunctionalityProviderTest {
 		try {
 			functionalityProvider.getFunctionalityForCreateBeforeReturn("place");
 		} catch (Exception e) {
-			// TODO:some other exception
-			assertTrue(e instanceof FedoraException);
+			assertTrue(e instanceof AlvinInitializationException);
 			assertEquals(e.getMessage(), errorMessage);
 
 		}

@@ -16,26 +16,29 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.uu.ub.cora.alvin.extendedfunctionality;
 
-import java.util.Map;
+package se.uu.ub.cora.alvin;
 
-import se.uu.ub.cora.spider.extended.ExtendedFunctionalityProvider;
-import se.uu.ub.cora.therest.initialize.TheRestDependencyProvider;
+import static org.testng.Assert.assertEquals;
 
-public class AlvinDependencyProvider extends TheRestDependencyProvider {
+import org.testng.annotations.Test;
 
-	public AlvinDependencyProvider(Map<String, String> initInfo) {
-		super(initInfo);
+public class AlvinInitializationExceptionTest {
+
+	@Test
+	public void testInit() {
+		String message = "message";
+		AlvinInitializationException exception = AlvinInitializationException.withMessage(message);
+		assertEquals(exception.getMessage(), "message");
 	}
 
-	@Override
-	public ExtendedFunctionalityProvider getExtendedFunctionalityProvider() {
-		return new AlvinExtendedFunctionalityProvider(this);
-	}
+	@Test
+	public void testWithMessageAndException() throws Exception {
+		Exception e = new Exception("some message");
+		AlvinInitializationException exception = AlvinInitializationException
+				.withMessageAndException("second message", e);
+		assertEquals(exception.getMessage(), "second message");
+		assertEquals(exception.getCause().getMessage(), "some message");
 
-	public Map<String, String> getInitInfo() {
-		return initInfo;
 	}
-
 }

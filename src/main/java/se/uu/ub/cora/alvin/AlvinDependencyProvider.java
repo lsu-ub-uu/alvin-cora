@@ -16,57 +16,27 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.uu.ub.cora.alvin.extendedfunctionality;
+package se.uu.ub.cora.alvin;
 
 import java.util.Map;
 
-import se.uu.ub.cora.alvin.AlvinDependencyProvider;
-import se.uu.ub.cora.search.RecordIndexer;
-import se.uu.ub.cora.search.RecordSearch;
-import se.uu.ub.cora.spider.authentication.Authenticator;
+import se.uu.ub.cora.alvin.extendedfunctionality.AlvinExtendedFunctionalityProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionalityProvider;
+import se.uu.ub.cora.therest.initialize.TheRestDependencyProvider;
 
-public class DependencyProviderSpy extends AlvinDependencyProvider {
+public class AlvinDependencyProvider extends TheRestDependencyProvider {
 
-	public DependencyProviderSpy(Map<String, String> initInfo) {
+	public AlvinDependencyProvider(Map<String, String> initInfo) {
 		super(initInfo);
-
-	}
-
-	@Override
-	protected void tryToInitialize() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	protected void readInitInfo() {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
 	public ExtendedFunctionalityProvider getExtendedFunctionalityProvider() {
-		// TODO Auto-generated method stub
-		return null;
+		return new AlvinExtendedFunctionalityProvider(this);
 	}
 
-	@Override
-	public Authenticator getAuthenticator() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RecordSearch getRecordSearch() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RecordIndexer getRecordIndexer() {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, String> getInitInfo() {
+		return initInfo;
 	}
 
 }

@@ -23,7 +23,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import se.uu.ub.cora.alvin.mixedstorage.fedora.FedoraException;
+import se.uu.ub.cora.alvin.AlvinDependencyProvider;
+import se.uu.ub.cora.alvin.AlvinInitializationException;
 import se.uu.ub.cora.logger.Logger;
 import se.uu.ub.cora.logger.LoggerProvider;
 import se.uu.ub.cora.messaging.ChannelInfo;
@@ -78,7 +79,7 @@ public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunct
 		if (!initInfo.containsKey(key)) {
 			String errorMessage = "InitInfo must contain " + key;
 			log.logFatalUsingMessage(errorMessage);
-			throw FedoraException.withMessage(errorMessage);
+			throw AlvinInitializationException.withMessage(errorMessage);
 		}
 	}
 
