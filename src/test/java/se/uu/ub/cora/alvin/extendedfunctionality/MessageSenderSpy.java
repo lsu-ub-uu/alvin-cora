@@ -18,15 +18,19 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
+import java.util.Map;
+
 import se.uu.ub.cora.messaging.MessageSender;
 
 public class MessageSenderSpy implements MessageSender {
 
 	public boolean sendMessageWasCalled = false;
+	public String messageSentToSpy;
 
 	@Override
-	public void sendMessage() {
+	public void sendMessage(Map<String, String> headers, String message) {
 		sendMessageWasCalled = true;
+		messageSentToSpy = message;
 	}
 
 }

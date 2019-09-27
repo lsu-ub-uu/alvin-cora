@@ -5,4 +5,5 @@ module se.uu.ub.cora.alvin {
 	requires se.uu.ub.cora.messaging;
 	requires se.uu.ub.cora.logger;
 	requires se.uu.ub.cora.alvin.mixedstorage;
+	requires org.json;
 }
