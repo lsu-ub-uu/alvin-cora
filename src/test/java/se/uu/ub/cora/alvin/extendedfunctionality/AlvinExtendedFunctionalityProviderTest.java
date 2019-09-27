@@ -30,7 +30,8 @@ import java.util.Map;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.basicstorage.DataStorageException;
+import se.uu.ub.cora.alvin.mixedstorage.fedora.FedoraException;
+import se.uu.ub.cora.logger.LoggerProvider;
 import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
@@ -40,6 +41,8 @@ public class AlvinExtendedFunctionalityProviderTest {
 	private AlvinExtendedFunctionalityProvider functionalityProvider;
 	private SpiderDependencyProvider dependencyProvider;
 	private Map<String, String> initInfo;
+	private LoggerFactorySpy loggerFactorySpy;
+	private String testedClassName = "AlvinExtendedFunctionalityProvider";
 
 	@BeforeMethod
 	public void setUp() {
@@ -52,6 +55,8 @@ public class AlvinExtendedFunctionalityProviderTest {
 	}
 
 	private void setUpFunctionalityProvider() {
+		loggerFactorySpy = new LoggerFactorySpy();
+		LoggerProvider.setLoggerFactory(loggerFactorySpy);
 		dependencyProvider = new DependencyProviderSpy(initInfo);
 		RecordStorageProviderSpy storageProvider = new RecordStorageProviderSpy();
 		dependencyProvider.setRecordStorageProvider(storageProvider);
@@ -105,27 +110,9 @@ public class AlvinExtendedFunctionalityProviderTest {
 		assertEquals(channelInfo.channel, initInfo.get("messageChannel"));
 	}
 
-	// @Test
-	// public void testLoggingAndErrorIfMissingParameterMessageServerHostname() {
-	// initInfo.remove("messageServerHostname");
-	// setUpFunctionalityProvider();
-	// try {
-	// List<ExtendedFunctionality> functionalityList = functionalityProvider
-	// .getFunctionalityForCreateBeforeReturn("place");
-	// } catch (Exception e) {
-	//
-	// }
-	// assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
-	// "AlvinMixedRecordStorageProvider starting AlvinMixedRecordStorage...");
-	// assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName), 1);
-	// assertEquals(loggerFactorySpy.getFatalLogMessageUsingClassNameAndNo(testedClassName, 0),
-	// "InitInfo must contain storageOnDiskBasePath");
-	// assertEquals(loggerFactorySpy.getNoOfFatalLogMessagesUsingClassName(testedClassName), 1);
-	// }
-
 	@Test
 	public void testLoggingAndErrorIfMissingParameterMessageServerHostname() {
-		assertCorrectErrorAndLogOnMissingParameter("messageServerHostname", 3);
+		assertCorrectErrorAndLogOnMissingParameter("messageServerHostname", 0);
 	}
 
 	private void assertCorrectErrorAndLogOnMissingParameter(String parameter,
@@ -136,17 +123,26 @@ public class AlvinExtendedFunctionalityProviderTest {
 		try {
 			functionalityProvider.getFunctionalityForCreateBeforeReturn("place");
 		} catch (Exception e) {
-			assertTrue(e instanceof DataStorageException);
+			// TODO:some other exception
+			assertTrue(e instanceof FedoraException);
 			assertEquals(e.getMessage(), errorMessage);
 
 		}
-		// assertEquals(loggerFactorySpy.getInfoLogMessageUsingClassNameAndNo(testedClassName, 0),
-		// "AlvinMixedRecordStorageProvider starting AlvinMixedRecordStorage...");
-		// assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName),
-		// noOfInfoMessages);
-		// assertEquals(loggerFactorySpy.getFatalLogMessageUsingClassNameAndNo(testedClassName, 0),
-		// errorMessage);
-		// assertEquals(loggerFactorySpy.getNoOfFatalLogMessagesUsingClassName(testedClassName), 1);
+		assertEquals(loggerFactorySpy.getNoOfInfoLogMessagesUsingClassName(testedClassName),
+				noOfInfoMessages);
+		assertEquals(loggerFactorySpy.getFatalLogMessageUsingClassNameAndNo(testedClassName, 0),
+				errorMessage);
+		assertEquals(loggerFactorySpy.getNoOfFatalLogMessagesUsingClassName(testedClassName), 1);
+	}
+
+	@Test
+	public void testLoggingAndErrorIfMissingParameterMessageServerPort() {
+		assertCorrectErrorAndLogOnMissingParameter("messageServerPort", 1);
+	}
+
+	@Test
+	public void testLoggingAndErrorIfMissingParameterMessageChannel() {
+		assertCorrectErrorAndLogOnMissingParameter("messageChannel", 2);
 	}
 
 }

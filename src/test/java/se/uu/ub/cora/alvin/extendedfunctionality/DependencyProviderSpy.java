@@ -20,7 +20,6 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 
 import java.util.Map;
 
-import se.uu.ub.cora.alvin.AlvinDependencyProvider;
 import se.uu.ub.cora.search.RecordIndexer;
 import se.uu.ub.cora.search.RecordSearch;
 import se.uu.ub.cora.spider.authentication.Authenticator;

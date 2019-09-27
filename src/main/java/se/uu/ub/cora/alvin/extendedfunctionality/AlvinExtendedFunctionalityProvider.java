@@ -23,15 +23,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import se.uu.ub.cora.alvin.AlvinDependencyProvider;
+import se.uu.ub.cora.alvin.mixedstorage.fedora.FedoraException;
+import se.uu.ub.cora.logger.Logger;
+import se.uu.ub.cora.logger.LoggerProvider;
 import se.uu.ub.cora.messaging.ChannelInfo;
 import se.uu.ub.cora.metacreator.extended.MetacreatorExtendedFunctionalityProvider;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 
 public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunctionalityProvider {
+	private Logger log = LoggerProvider.getLoggerForClass(AlvinExtendedFunctionalityProvider.class);
 
 	private static final String PLACE = "place";
+
+	private Map<String, String> initInfo;
 
 	public AlvinExtendedFunctionalityProvider(SpiderDependencyProvider dependencyProvider) {
 		super(dependencyProvider);
@@ -51,11 +56,30 @@ public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunct
 
 	private ChannelInfo createChannelInfo() {
 		AlvinDependencyProvider alvinDependenProvider = (AlvinDependencyProvider) dependencyProvider;
-		Map<String, String> initInfo = alvinDependenProvider.getInitInfo();
-		String hostname = initInfo.get("messageServerHostname");
-		String port = initInfo.get("messageServerPort");
-		String channel = initInfo.get("messageChannel");
+		initInfo = alvinDependenProvider.getInitInfo();
+		String hostname = tryToGetInitParameterLogIfFound("messageServerHostname");
+		String port = tryToGetInitParameterLogIfFound("messageServerPort");
+		String channel = tryToGetInitParameterLogIfFound("messageChannel");
 		return new ChannelInfo(hostname, port, channel);
+	}
+
+	private String tryToGetInitParameterLogIfFound(String parameterName) {
+		String basePath = tryToGetInitParameter(parameterName);
+		log.logInfoUsingMessage("Found " + basePath + " as " + parameterName);
+		return basePath;
+	}
+
+	private String tryToGetInitParameter(String parameterName) {
+		throwErrorIfKeyIsMissingFromInitInfo(parameterName);
+		return initInfo.get(parameterName);
+	}
+
+	private void throwErrorIfKeyIsMissingFromInitInfo(String key) {
+		if (!initInfo.containsKey(key)) {
+			String errorMessage = "InitInfo must contain " + key;
+			log.logFatalUsingMessage(errorMessage);
+			throw FedoraException.withMessage(errorMessage);
+		}
 	}
 
 	@Override

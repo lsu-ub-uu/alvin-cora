@@ -16,11 +16,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with Cora.  If not, see <http://www.gnu.org/licenses/>.
  */
-package se.uu.ub.cora.alvin;
+package se.uu.ub.cora.alvin.extendedfunctionality;
 
 import java.util.Map;
 
-import se.uu.ub.cora.alvin.extendedfunctionality.AlvinExtendedFunctionalityProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionalityProvider;
 import se.uu.ub.cora.therest.initialize.TheRestDependencyProvider;
 
