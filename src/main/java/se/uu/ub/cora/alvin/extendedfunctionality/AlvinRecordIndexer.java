@@ -18,8 +18,10 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
-import se.uu.ub.cora.json.builder.org.OrgJsonObjectBuilderAdapter;
-import se.uu.ub.cora.messaging.ChannelInfo;
+import java.util.HashMap;
+import java.util.Map;
+
+import se.uu.ub.cora.messaging.MessageRoutingInfo;
 import se.uu.ub.cora.messaging.MessageSender;
 import se.uu.ub.cora.messaging.MessagingProvider;
 import se.uu.ub.cora.spider.data.SpiderDataGroup;
@@ -27,57 +29,28 @@ import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 
 public class AlvinRecordIndexer implements ExtendedFunctionality {
 
-	private ChannelInfo channelInfo;
+	private MessageRoutingInfo channelInfo;
+	private String type;
+	private String pid;
 
-	public AlvinRecordIndexer(ChannelInfo channelInfo) {
+	public AlvinRecordIndexer(MessageRoutingInfo channelInfo) {
 		this.channelInfo = channelInfo;
 	}
 
 	@Override
 	public void useExtendedFunctionality(String authToken, SpiderDataGroup spiderDataGroup) {
+		extractTypeAndPid(spiderDataGroup);
+		Map<String, Object> headers = createHeaders();
+		String message = createMessage();
+
 		MessageSender messageSender = MessagingProvider.getTopicMessageSender(channelInfo);
-		String message = createMessage(spiderDataGroup);
-		messageSender.sendMessage(null, message);
+		messageSender.sendMessage(headers, message);
 	}
 
-	private String createMessage(SpiderDataGroup spiderDataGroup) {
+	private void extractTypeAndPid(SpiderDataGroup spiderDataGroup) {
 		SpiderDataGroup recordInfo = spiderDataGroup.extractGroup("recordInfo");
-		String pid = recordInfo.extractAtomicValue("id");
-		String type = getRecordType(recordInfo);
-		OrgJsonObjectBuilderAdapter builderAdapter = createJsonObjectBuilderWithValues(pid, type);
-		return builderAdapter.toJsonFormattedString();
-
-		// new IndexMessageCreator(type, id);
-	}
-
-	// private OrgJsonObjectBuilderAdapter createJsonObject(SpiderDataGroup spiderDataGroup) {
-	// SpiderDataGroup recordInfo = spiderDataGroup.extractGroup("recordInfo");
-	// String pid = recordInfo.extractAtomicValue("id");
-	// String type = getRecordType(recordInfo);
-	//
-	// return createJsonObjectBuilderWithValues(pid, type);
-	// }
-
-	private OrgJsonObjectBuilderAdapter createJsonObjectBuilderWithValues(String pid, String type) {
-		OrgJsonObjectBuilderAdapter builderAdapter = new OrgJsonObjectBuilderAdapter();
-		builderAdapter.addKeyString("pid", pid);
-		builderAdapter.addKeyString("routingKey", "alvin.updates." + type);
-		builderAdapter.addKeyString("action", "UPDATE");
-
-		addHeaders(pid, builderAdapter);
-		return builderAdapter;
-	}
-
-	private void addHeaders(String pid, OrgJsonObjectBuilderAdapter builderAdapter) {
-		OrgJsonObjectBuilderAdapter builderAdapterHeaders = createJsonBuilderAdapterForHeaders(pid);
-		builderAdapter.addKeyJsonObjectBuilder("headers", builderAdapterHeaders);
-	}
-
-	private OrgJsonObjectBuilderAdapter createJsonBuilderAdapterForHeaders(String pid) {
-		OrgJsonObjectBuilderAdapter builderAdapterHeaders = new OrgJsonObjectBuilderAdapter();
-		builderAdapterHeaders.addKeyString("ACTION", "UPDATE");
-		builderAdapterHeaders.addKeyString("PID", pid);
-		return builderAdapterHeaders;
+		type = getRecordType(recordInfo);
+		pid = recordInfo.extractAtomicValue("id");
 	}
 
 	private String getRecordType(SpiderDataGroup recordInfo) {
@@ -85,7 +58,21 @@ public class AlvinRecordIndexer implements ExtendedFunctionality {
 		return typeGroup.extractAtomicValue("linkedRecordId");
 	}
 
-	ChannelInfo getChannelInfo() {
+	private Map<String, Object> createHeaders() {
+		Map<String, Object> headers = new HashMap<>();
+		headers.put("__TypeId__", "epc.messaging.amqp.EPCFedoraMessage");
+		headers.put("ACTION", "UPDATE");
+		headers.put("PID", pid);
+		headers.put("messageSentFrom", "Cora");
+		return headers;
+	}
+
+	private String createMessage() {
+		IndexMessageCreator indexMessageCreator = IndexMessageCreator.usingId(pid);
+		return indexMessageCreator.createMessage("alvin.updates." + type, "UPDATE");
+	}
+
+	MessageRoutingInfo getMessageRoutingInfo() {
 		// needed for test
 		return channelInfo;
 	}

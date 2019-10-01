@@ -18,6 +18,7 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import se.uu.ub.cora.messaging.MessageSender;
@@ -26,11 +27,15 @@ public class MessageSenderSpy implements MessageSender {
 
 	public boolean sendMessageWasCalled = false;
 	public String messageSentToSpy;
+	public Map<String, Object> headersSentToSpy = new HashMap<>();
 
 	@Override
-	public void sendMessage(Map<String, String> headers, String message) {
+	public void sendMessage(Map<String, Object> headers, String message) {
 		sendMessageWasCalled = true;
 		messageSentToSpy = message;
+
+		headersSentToSpy.putAll(headers);
+
 	}
 
 }

@@ -18,7 +18,7 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
-import se.uu.ub.cora.messaging.ChannelInfo;
+import se.uu.ub.cora.messaging.MessageRoutingInfo;
 import se.uu.ub.cora.messaging.MessageSender;
 import se.uu.ub.cora.messaging.MessagingFactory;
 
@@ -26,11 +26,11 @@ public class MessagingFactorySpy implements MessagingFactory {
 
 	public boolean factorMessageSenderWasCalled = false;
 	public MessageSenderSpy messageSenderSpy;
-	public ChannelInfo channelInfo;
+	public MessageRoutingInfo messageRoutingInfo;
 
 	@Override
-	public MessageSender factorTopicSenderMessage(ChannelInfo channelInfo) {
-		this.channelInfo = channelInfo;
+	public MessageSender factorTopicMessageSender(MessageRoutingInfo channelInfo) {
+		this.messageRoutingInfo = channelInfo;
 		factorMessageSenderWasCalled = true;
 		messageSenderSpy = new MessageSenderSpy();
 		return messageSenderSpy;

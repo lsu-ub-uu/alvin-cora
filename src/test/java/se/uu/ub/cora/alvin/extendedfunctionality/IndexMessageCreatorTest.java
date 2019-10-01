@@ -12,8 +12,7 @@ public class IndexMessageCreatorTest {
 
 	@Test
 	public void testInit() {
-		IndexMessageCreator messageCreator = IndexMessageCreator.withTypeAndId("someType",
-				"someId");
+		IndexMessageCreator messageCreator = IndexMessageCreator.usingId("someId");
 		String message = messageCreator.createMessage("alvin.updates.someType", "UPDATE");
 		assertEquals(expectedMessage, message);
 

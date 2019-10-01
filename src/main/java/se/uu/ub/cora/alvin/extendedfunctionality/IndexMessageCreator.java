@@ -4,16 +4,14 @@ import se.uu.ub.cora.json.builder.org.OrgJsonObjectBuilderAdapter;
 
 public class IndexMessageCreator {
 
-	private String type;
 	private String id;
 
-	private IndexMessageCreator(String type, String id) {
-		this.type = type;
+	private IndexMessageCreator(String id) {
 		this.id = id;
 	}
 
-	public static IndexMessageCreator withTypeAndId(String type, String id) {
-		return new IndexMessageCreator(type, id);
+	public static IndexMessageCreator usingId(String id) {
+		return new IndexMessageCreator(id);
 	}
 
 	public String createMessage(String routingKey, String action) {

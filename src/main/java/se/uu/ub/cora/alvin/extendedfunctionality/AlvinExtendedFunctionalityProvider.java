@@ -27,12 +27,14 @@ import se.uu.ub.cora.alvin.AlvinDependencyProvider;
 import se.uu.ub.cora.alvin.AlvinInitializationException;
 import se.uu.ub.cora.logger.Logger;
 import se.uu.ub.cora.logger.LoggerProvider;
-import se.uu.ub.cora.messaging.ChannelInfo;
+import se.uu.ub.cora.messaging.MessageRoutingInfo;
 import se.uu.ub.cora.metacreator.extended.MetacreatorExtendedFunctionalityProvider;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 
 public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunctionalityProvider {
+	private static final String VIRTUAL_HOST = "alvin";
+
 	private Logger log = LoggerProvider.getLoggerForClass(AlvinExtendedFunctionalityProvider.class);
 
 	private static final String PLACE = "place";
@@ -48,20 +50,20 @@ public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunct
 		List<ExtendedFunctionality> list = super.getFunctionalityForCreateBeforeReturn(recordType);
 		if (PLACE.equals(recordType)) {
 			list = ensureListExists(list);
-			ChannelInfo channelInfo = createChannelInfo();
+			MessageRoutingInfo channelInfo = createChannelInfo(recordType);
 			list.add(new AlvinRecordIndexer(channelInfo));
 		}
 
 		return list;
 	}
 
-	private ChannelInfo createChannelInfo() {
+	private MessageRoutingInfo createChannelInfo(String recordType) {
 		AlvinDependencyProvider alvinDependenProvider = (AlvinDependencyProvider) dependencyProvider;
 		initInfo = alvinDependenProvider.getInitInfo();
 		String hostname = tryToGetInitParameterLogIfFound("messageServerHostname");
 		String port = tryToGetInitParameterLogIfFound("messageServerPort");
-		String channel = tryToGetInitParameterLogIfFound("messageChannel");
-		return new ChannelInfo(hostname, port, channel);
+		String routingKey = "alvin.updates." + recordType;
+		return new MessageRoutingInfo(hostname, port, VIRTUAL_HOST, "index", routingKey);
 	}
 
 	private String tryToGetInitParameterLogIfFound(String parameterName) {

@@ -32,7 +32,7 @@ import org.testng.annotations.Test;
 
 import se.uu.ub.cora.alvin.AlvinInitializationException;
 import se.uu.ub.cora.logger.LoggerProvider;
-import se.uu.ub.cora.messaging.ChannelInfo;
+import se.uu.ub.cora.messaging.MessageRoutingInfo;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 
@@ -49,7 +49,6 @@ public class AlvinExtendedFunctionalityProviderTest {
 		initInfo = new HashMap<>();
 		initInfo.put("messageServerHostname", "someHostname");
 		initInfo.put("messageServerPort", "somePort");
-		initInfo.put("messageChannel", "someChannel");
 
 		setUpFunctionalityProvider();
 	}
@@ -77,7 +76,6 @@ public class AlvinExtendedFunctionalityProviderTest {
 
 		assertEquals(functionalityList.size(), 1);
 		assertTrue(functionalityList.get(0) instanceof RecordBeforeDeleteUpdater);
-
 	}
 
 	@Test
@@ -104,10 +102,17 @@ public class AlvinExtendedFunctionalityProviderTest {
 		assertEquals(functionalityList.size(), 1);
 		assertTrue(functionalityList.get(0) instanceof AlvinRecordIndexer);
 		AlvinRecordIndexer alvinRecordIndexer = (AlvinRecordIndexer) functionalityList.get(0);
-		ChannelInfo channelInfo = alvinRecordIndexer.getChannelInfo();
-		assertEquals(channelInfo.hostname, initInfo.get("messageServerHostname"));
-		assertEquals(channelInfo.port, initInfo.get("messageServerPort"));
-		assertEquals(channelInfo.channel, initInfo.get("messageChannel"));
+		assertCorrectMessageRoutingInfoSentToIndexer(alvinRecordIndexer);
+	}
+
+	private void assertCorrectMessageRoutingInfoSentToIndexer(
+			AlvinRecordIndexer alvinRecordIndexer) {
+		MessageRoutingInfo messageRoutingInfo = alvinRecordIndexer.getMessageRoutingInfo();
+		assertEquals(messageRoutingInfo.hostname, initInfo.get("messageServerHostname"));
+		assertEquals(messageRoutingInfo.port, initInfo.get("messageServerPort"));
+		assertEquals(messageRoutingInfo.virtualHost, "alvin");
+		assertEquals(messageRoutingInfo.exchange, "index");
+		assertEquals(messageRoutingInfo.routingKey, "alvin.updates.place");
 	}
 
 	@Test
@@ -137,11 +142,6 @@ public class AlvinExtendedFunctionalityProviderTest {
 	@Test
 	public void testLoggingAndErrorIfMissingParameterMessageServerPort() {
 		assertCorrectErrorAndLogOnMissingParameter("messageServerPort", 1);
-	}
-
-	@Test
-	public void testLoggingAndErrorIfMissingParameterMessageChannel() {
-		assertCorrectErrorAndLogOnMissingParameter("messageChannel", 2);
 	}
 
 }
