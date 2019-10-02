@@ -28,7 +28,7 @@
 	<properties>
 		<!-- compile -->
 		<therest.version>2.6.0</therest.version>
-		<alvinmixedstorage.version>1.12.0</alvinmixedstorage.version>
+		<alvinmixedstorage.version>1.12.1</alvinmixedstorage.version>
 		
 		<javax.ws.rs.version>2.1.1</javax.ws.rs.version>
 		<jersey.version>2.27</jersey.version>
