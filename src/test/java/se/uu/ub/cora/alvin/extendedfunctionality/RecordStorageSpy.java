@@ -49,7 +49,7 @@ public class RecordStorageSpy implements RecordStorage {
 
 	@Override
 	public DataGroup read(String arg0, String arg1) {
-		return DataGroup.withNameInData("someNameInData");
+		return new DataGroupSpy("someNameInData");
 		// return null;
 	}
 
