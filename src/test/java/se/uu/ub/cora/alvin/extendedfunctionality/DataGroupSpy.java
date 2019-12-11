@@ -28,6 +28,7 @@ import se.uu.ub.cora.data.DataAtomic;
 import se.uu.ub.cora.data.DataAttribute;
 import se.uu.ub.cora.data.DataElement;
 import se.uu.ub.cora.data.DataGroup;
+import se.uu.ub.cora.spider.data.DataMissingException;
 
 public class DataGroupSpy implements DataGroup {
 
@@ -52,26 +53,37 @@ public class DataGroupSpy implements DataGroup {
 
 	@Override
 	public String getFirstAtomicValueWithNameInData(String nameInData) {
-		// TODO Auto-generated method stub
-		return null;
+		for (DataElement dataElement : children) {
+			if (nameInData.equals(dataElement.getNameInData())) {
+				if (dataElement instanceof DataAtomic) {
+					return ((DataAtomic) dataElement).getValue();
+				}
+			}
+		}
+		throw new DataMissingException("Atomic value not found for childNameInData:" + nameInData);
 	}
 
 	@Override
 	public DataGroup getFirstGroupWithNameInData(String childNameInData) {
-		// TODO Auto-generated method stub
-		return null;
+		for (DataElement dataElement : children) {
+			if (childNameInData.equals(dataElement.getNameInData())) {
+				if (dataElement instanceof DataGroup) {
+					return ((DataGroup) dataElement);
+				}
+			}
+		}
+		throw new DataMissingException("Group not found for childNameInData:" + childNameInData);
 	}
 
 	@Override
 	public void addChild(DataElement dataElement) {
-		// TODO Auto-generated method stub
+		children.add(dataElement);
 
 	}
 
 	@Override
 	public List<DataElement> getChildren() {
-		// TODO Auto-generated method stub
-		return null;
+		return children;
 	}
 
 	@Override

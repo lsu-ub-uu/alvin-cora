@@ -18,25 +18,45 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
-import se.uu.ub.cora.data.DataGroup;
-import se.uu.ub.cora.data.DataRecord;
-import se.uu.ub.cora.spider.record.SpiderRecordUpdater;
+import se.uu.ub.cora.data.DataAtomic;
 
-public class SpiderRecordUpdaterSpy implements SpiderRecordUpdater {
+public class DataAtomicSpy implements DataAtomic {
 
-	public String authToken;
-	public String type;
-	public String id;
-	public DataGroup record;
+	public String nameInData;
+	public String value;
+	public String repeatId;
+
+	public DataAtomicSpy(String nameInData, String value) {
+		this.nameInData = nameInData;
+		this.value = value;
+	}
+
+	public DataAtomicSpy(String nameInData, String value, String repeatId) {
+		this.nameInData = nameInData;
+		this.value = value;
+		this.repeatId = repeatId;
+
+	}
 
 	@Override
-	public DataRecord updateRecord(String authToken, String type, String id, DataGroup record) {
-		this.authToken = authToken;
-		this.type = type;
-		this.id = id;
-		this.record = record;
+	public String getRepeatId() {
+		return repeatId;
+	}
 
-		return null;
+	@Override
+	public String getNameInData() {
+		return nameInData;
+	}
+
+	@Override
+	public String getValue() {
+		return value;
+	}
+
+	@Override
+	public void setRepeatId(String repeatId) {
+		this.repeatId = repeatId;
+
 	}
 
 }

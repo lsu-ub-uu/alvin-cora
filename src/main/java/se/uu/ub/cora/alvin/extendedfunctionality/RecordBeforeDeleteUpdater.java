@@ -18,7 +18,7 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
-import se.uu.ub.cora.spider.data.SpiderDataGroup;
+import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.spider.dependency.SpiderInstanceProvider;
 import se.uu.ub.cora.spider.extended.ExtendedFunctionality;
 import se.uu.ub.cora.spider.record.SpiderRecordUpdater;
@@ -26,17 +26,17 @@ import se.uu.ub.cora.spider.record.SpiderRecordUpdater;
 public class RecordBeforeDeleteUpdater implements ExtendedFunctionality {
 
 	@Override
-	public void useExtendedFunctionality(String authToken, SpiderDataGroup spiderDataGroup) {
-		SpiderDataGroup recordInfo = spiderDataGroup.extractGroup("recordInfo");
+	public void useExtendedFunctionality(String authToken, DataGroup dataGroup) {
+		DataGroup recordInfo = dataGroup.getFirstGroupWithNameInData("recordInfo");
 		String recordType = extractType(recordInfo);
-		String recordId = recordInfo.extractAtomicValue("id");
+		String recordId = recordInfo.getFirstAtomicValueWithNameInData("id");
 		SpiderRecordUpdater spiderRecordUpdater = SpiderInstanceProvider.getSpiderRecordUpdater();
-		spiderRecordUpdater.updateRecord(authToken, recordType, recordId, spiderDataGroup);
+		spiderRecordUpdater.updateRecord(authToken, recordType, recordId, dataGroup);
 	}
 
-	private String extractType(SpiderDataGroup recordInfo) {
-		SpiderDataGroup type = recordInfo.extractGroup("type");
-		return type.extractAtomicValue("linkedRecordId");
+	private String extractType(DataGroup recordInfo) {
+		DataGroup type = recordInfo.getFirstGroupWithNameInData("type");
+		return type.getFirstAtomicValueWithNameInData("linkedRecordId");
 	}
 
 }

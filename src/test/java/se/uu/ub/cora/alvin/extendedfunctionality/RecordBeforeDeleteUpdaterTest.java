@@ -25,8 +25,7 @@ import static org.testng.Assert.assertSame;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.spider.data.SpiderDataAtomic;
-import se.uu.ub.cora.spider.data.SpiderDataGroup;
+import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.dependency.SpiderInstanceProvider;
 
@@ -45,7 +44,7 @@ public class RecordBeforeDeleteUpdaterTest {
 	public void testInit() {
 		RecordBeforeDeleteUpdater updater = new RecordBeforeDeleteUpdater();
 		String authToken = "someAuthToken";
-		SpiderDataGroup dataGroup = createDataGroup();
+		DataGroup dataGroup = createDataGroup();
 		updater.useExtendedFunctionality(authToken, dataGroup);
 		SpiderRecordUpdaterSpy factoredUpdater = (SpiderRecordUpdaterSpy) spiderInstanceFactory.factoredRecordUpdaters
 				.get(0);
@@ -56,25 +55,25 @@ public class RecordBeforeDeleteUpdaterTest {
 		assertEquals("someRecordId", factoredUpdater.id);
 	}
 
-	private SpiderDataGroup createDataGroup() {
-		SpiderDataGroup dataGroup = SpiderDataGroup.withNameInData("someNameInData");
-		SpiderDataGroup recordInfo = createRecordInfo();
+	private DataGroup createDataGroup() {
+		DataGroup dataGroup = new DataGroupSpy("someNameInData");
+		DataGroup recordInfo = createRecordInfo();
 		dataGroup.addChild(recordInfo);
 		return dataGroup;
 	}
 
-	private SpiderDataGroup createRecordInfo() {
-		SpiderDataGroup recordInfo = SpiderDataGroup.withNameInData("recordInfo");
-		SpiderDataGroup type = createType();
+	private DataGroup createRecordInfo() {
+		DataGroup recordInfo = new DataGroupSpy("recordInfo");
+		DataGroup type = createType();
 		recordInfo.addChild(type);
-		recordInfo.addChild(SpiderDataAtomic.withNameInDataAndValue("id", "someRecordId"));
+		recordInfo.addChild(new DataAtomicSpy("id", "someRecordId"));
 		return recordInfo;
 	}
 
-	private SpiderDataGroup createType() {
-		SpiderDataGroup type = SpiderDataGroup.withNameInData("type");
-		type.addChild(SpiderDataAtomic.withNameInDataAndValue("linkedRecordType", "recordType"));
-		type.addChild(SpiderDataAtomic.withNameInDataAndValue("linkedRecordId", "someRecordType"));
+	private DataGroup createType() {
+		DataGroup type = new DataGroupSpy("type");
+		type.addChild(new DataAtomicSpy("linkedRecordType", "recordType"));
+		type.addChild(new DataAtomicSpy("linkedRecordId", "someRecordType"));
 		return type;
 	}
 
