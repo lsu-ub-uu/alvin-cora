@@ -52,19 +52,31 @@ public class DataGroupSpy implements DataGroup {
 
 	@Override
 	public String getFirstAtomicValueWithNameInData(String nameInData) {
-		// TODO Auto-generated method stub
+		for (DataElement dataElement : children) {
+			if (nameInData.equals(dataElement.getNameInData())) {
+				if (dataElement instanceof DataAtomic) {
+					return ((DataAtomic) dataElement).getValue();
+				}
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public DataGroup getFirstGroupWithNameInData(String childNameInData) {
-		// TODO Auto-generated method stub
+		for (DataElement dataElement : children) {
+			if (childNameInData.equals(dataElement.getNameInData())) {
+				if (dataElement instanceof DataGroup) {
+					return ((DataGroup) dataElement);
+				}
+			}
+		}
 		return null;
 	}
 
 	@Override
 	public void addChild(DataElement dataElement) {
-		// TODO Auto-generated method stub
+		children.add(dataElement);
 
 	}
 
