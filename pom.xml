@@ -27,7 +27,7 @@
 	
 	<properties>
 		<!-- compile -->
-		<therest.version>4.5.0</therest.version>
+		<therest.version>4.8.0</therest.version>
 		<alvinmixedstorage.version>3.2.0</alvinmixedstorage.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 	</properties>
