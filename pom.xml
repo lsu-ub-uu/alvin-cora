@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>se.uu.ub.cora</groupId>
 		<artifactId>cora-parent</artifactId>
-		<version>1.0.2</version>
+		<version>1.1.1</version>
 	</parent>
 
 	<artifactId>alvin</artifactId>
@@ -27,8 +27,8 @@
 	
 	<properties>
 		<!-- compile -->
-		<therest.version>4.14.0</therest.version>
-		<alvinmixedstorage.version>3.4.0</alvinmixedstorage.version>
+		<therest.version>4.15.0</therest.version>
+		<alvinmixedstorage.version>3.5.0</alvinmixedstorage.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 	</properties>
 
