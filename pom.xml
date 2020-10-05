@@ -1,12 +1,21 @@
-<!-- ~ Copyright 2018 Uppsala University Library ~ ~ This file is part of 
-	Cora. ~ ~ Cora is free software: you can redistribute it and/or modify ~ 
-	it under the terms of the GNU General Public License as published by ~ the 
-	Free Software Foundation, either version 3 of the License, or ~ (at your 
-	option) any later version. ~ ~ Cora is distributed in the hope that it will 
-	be useful, ~ but WITHOUT ANY WARRANTY; without even the implied warranty 
-	of ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the ~ GNU General 
-	Public License for more details. ~ ~ You should have received a copy of the 
-	GNU General Public License ~ along with Cora. If not, see <http://www.gnu.org/licenses />. -->
+<!-- 
+~ Copyright 2018, 2019, 2020 Uppsala University Library 
+~ 
+~ This file is part of Cora. 
+~ 
+~ 	Cora is free software: you can redistribute it and/or modify 
+~ 	it under the terms of the GNU General Public License as published by 
+~ 	the Free Software Foundation, either version 3 of the License, or 
+~ 	(at your option) any later version. 
+~ 
+~ 	Cora is distributed in the hope that it will be useful, 
+~ 	but WITHOUT ANY WARRANTY; without even the implied warranty of 
+~ 	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+~ 	GNU General Public License for more details. 
+~ 
+~ 	You should have received a copy of the GNU General Public License 
+~ 	along with Cora. If not, see <http://www.gnu.org/licenses />. 
+-->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -27,8 +36,21 @@
 	
 	<properties>
 		<!-- compile -->
-		<therest.version>4.15.0</therest.version>
-		<alvinmixedstorage.version>3.5.0</alvinmixedstorage.version>
+		<coralog4j.version>2.1.0</coralog4j.version>
+		<json.version>2.1.0</json.version>
+		<spider.version>3.16-SNAPSHOT</spider.version>
+		<therest.version>4.16.0</therest.version>
+		<beefeater.version>3.3-SNAPSHOT</beefeater.version>
+		<bookkeeper.version>4.9.0</bookkeeper.version>
+		<basicdata.version>1.11.0</basicdata.version>
+		<gatekeeper.version>3.5.0</gatekeeper.version>
+		<gatekeeperclient.version>3.8.0</gatekeeperclient.version>
+		<alvinmixedstorage.version>3.7.0</alvinmixedstorage.version>
+		<storage.version>3.7.0</storage.version>
+		<basicstorage.version>3.14.0</basicstorage.version>
+		<solrsearch.version>3.5.0</solrsearch.version>
+		<metacreator.version>3.9.0</metacreator.version>
+		<httphandler.version>2.1.0</httphandler.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
 	</properties>
 
@@ -51,15 +73,80 @@
 		<!-- compile -->
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>log4j</artifactId>
+			<version>${coralog4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>therest</artifactId>
 			<version>${therest.version}</version>
-			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>beefeater</artifactId>
+			<version>${beefeater.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>bookkeeper</artifactId>
+			<version>${bookkeeper.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>basicdata</artifactId>
+			<version>${basicdata.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>storage</artifactId>
+			<version>${storage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>basicstorage</artifactId>
+			<version>${basicstorage.version}</version>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>json</artifactId>
+			<version>${json.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>spider</artifactId>
+			<version>${spider.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>gatekeeper</artifactId>
+			<version>${gatekeeper.version}</version>
+ 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>gatekeeperclient</artifactId>
+			<version>${gatekeeperclient.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>alvinmixedstorage</artifactId>
 			<version>${alvinmixedstorage.version}</version>
-			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>solrsearch</artifactId>
+			<version>${solrsearch.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>metacreator</artifactId>
+			<version>${metacreator.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>httphandler</artifactId>
+			<version>${httphandler.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -68,5 +155,4 @@
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
-
 </project>
