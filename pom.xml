@@ -38,9 +38,9 @@
 		<!-- compile -->
 		<coralog4j.version>2.1.0</coralog4j.version>
 		<json.version>2.1.0</json.version>
-		<spider.version>3.16-SNAPSHOT</spider.version>
+		<spider.version>3.16.0</spider.version>
 		<therest.version>4.16.0</therest.version>
-		<beefeater.version>3.3-SNAPSHOT</beefeater.version>
+		<beefeater.version>3.3.0</beefeater.version>
 		<bookkeeper.version>4.9.0</bookkeeper.version>
 		<basicdata.version>1.11.0</basicdata.version>
 		<gatekeeper.version>3.5.0</gatekeeper.version>
