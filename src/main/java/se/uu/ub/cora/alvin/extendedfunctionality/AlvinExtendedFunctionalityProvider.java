@@ -18,8 +18,6 @@
  */
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import se.uu.ub.cora.metacreator.extended.MetacreatorExtendedFunctionalityProvider;
@@ -39,16 +37,7 @@ public class AlvinExtendedFunctionalityProvider extends MetacreatorExtendedFunct
 		List<ExtendedFunctionality> list = super.getFunctionalityForCreateBeforeMetadataValidation(
 				recordType);
 		if (PLACE.equals(recordType)) {
-			list = ensureListExists(list);
 			list.add(new RecordBeforeDeleteUpdater());
-		}
-		return list;
-	}
-
-	@Override
-	protected List<ExtendedFunctionality> ensureListExists(List<ExtendedFunctionality> list) {
-		if (Collections.emptyList().equals(list)) {
-			return new ArrayList<>();
 		}
 		return list;
 	}

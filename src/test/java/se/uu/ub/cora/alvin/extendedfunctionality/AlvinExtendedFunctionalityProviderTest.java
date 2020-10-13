@@ -21,7 +21,6 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -61,14 +60,4 @@ public class AlvinExtendedFunctionalityProviderTest {
 		assertTrue(functionalityList.get(0) instanceof RecordBeforeDeleteUpdater);
 
 	}
-
-	@Test
-	public void testEnsureListIsRealList() {
-		assertTrue(functionalityProvider
-				.ensureListExists(Collections.emptyList()) instanceof ArrayList);
-		List<ExtendedFunctionality> list = new ArrayList<>();
-		list.add(null);
-		assertEquals(functionalityProvider.ensureListExists(list), list);
-	}
-
 }
