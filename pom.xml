@@ -38,8 +38,8 @@
 		<!-- compile -->
 		<coralog4j.version>2.1.0</coralog4j.version>
 		<json.version>2.1.0</json.version>
-		<spider.version>4.0-SNAPSHOT</spider.version>
-		<therest.version>5.0-SNAPSHOT</therest.version>
+		<spider.version>4.0.0</spider.version>
+		<therest.version>5.0.0</therest.version>
 		<beefeater.version>3.3.0</beefeater.version>
 		<bookkeeper.version>4.9.0</bookkeeper.version>
 		<basicdata.version>1.11.0</basicdata.version>
@@ -49,7 +49,7 @@
 		<storage.version>3.7.0</storage.version>
 		<basicstorage.version>3.14.0</basicstorage.version>
 		<solrsearch.version>3.5.0</solrsearch.version>
-		<metacreator.version>4.0-SNAPSHOT</metacreator.version>
+		<metacreator.version>4.0.0</metacreator.version>
 		<httphandler.version>2.1.0</httphandler.version>
 		<apptokenstorage.version>2.1.0</apptokenstorage.version>
 		<servlet-api.version>4.0.1</servlet-api.version>
