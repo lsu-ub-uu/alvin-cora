@@ -45,7 +45,7 @@
 		<basicdata.version>1.12.0</basicdata.version>
 		<gatekeeper.version>3.6.0</gatekeeper.version>
 		<gatekeeperclient.version>3.9.0</gatekeeperclient.version>
-		<alvinmixedstorage.version>3.8.0</alvinmixedstorage.version>
+		<alvinmixedstorage.version>3.9-SNAPSHOT</alvinmixedstorage.version>
 		<storage.version>3.8.0</storage.version>
 		<basicstorage.version>3.16.0</basicstorage.version>
 		<solrsearch.version>3.6.0</solrsearch.version>
