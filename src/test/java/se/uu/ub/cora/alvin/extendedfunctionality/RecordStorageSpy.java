@@ -19,6 +19,7 @@
 package se.uu.ub.cora.alvin.extendedfunctionality;
 
 import java.util.Collection;
+import java.util.List;
 
 import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.storage.RecordStorage;
@@ -79,12 +80,6 @@ public class RecordStorageSpy implements RecordStorage {
 	}
 
 	@Override
-	public boolean recordsExistForRecordType(String arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
 	public void update(String arg0, String arg1, DataGroup arg2, DataGroup arg3, DataGroup arg4,
 			String arg5) {
 		// TODO Auto-generated method stub
@@ -95,6 +90,19 @@ public class RecordStorageSpy implements RecordStorage {
 	public Collection<DataGroup> generateLinkCollectionPointingToRecord(String arg0, String arg1) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public long getTotalNumberOfRecordsForAbstractType(String arg0, List<String> arg1,
+			DataGroup arg2) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public long getTotalNumberOfRecordsForType(String arg0, DataGroup arg1) {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

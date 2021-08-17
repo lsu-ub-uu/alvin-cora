@@ -21,7 +21,7 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.spider.dependency.SpiderInstanceProvider;
 import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionality;
-import se.uu.ub.cora.spider.record.SpiderRecordUpdater;
+import se.uu.ub.cora.spider.record.RecordUpdater;
 
 public class RecordBeforeDeleteUpdater implements ExtendedFunctionality {
 
@@ -30,7 +30,7 @@ public class RecordBeforeDeleteUpdater implements ExtendedFunctionality {
 		DataGroup recordInfo = spiderDataGroup.getFirstGroupWithNameInData("recordInfo");
 		String recordType = extractType(recordInfo);
 		String recordId = recordInfo.getFirstAtomicValueWithNameInData("id");
-		SpiderRecordUpdater spiderRecordUpdater = SpiderInstanceProvider.getSpiderRecordUpdater();
+		RecordUpdater spiderRecordUpdater = SpiderInstanceProvider.getRecordUpdater();
 		spiderRecordUpdater.updateRecord(authToken, recordType, recordId, spiderDataGroup);
 	}
 

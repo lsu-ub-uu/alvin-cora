@@ -20,9 +20,9 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 
 import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.data.DataRecord;
-import se.uu.ub.cora.spider.record.SpiderRecordUpdater;
+import se.uu.ub.cora.spider.record.RecordUpdater;
 
-public class SpiderRecordUpdaterSpy implements SpiderRecordUpdater {
+public class SpiderRecordUpdaterSpy implements RecordUpdater {
 
 	public String authToken;
 	public String type;
