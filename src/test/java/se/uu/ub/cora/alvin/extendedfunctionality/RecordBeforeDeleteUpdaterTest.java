@@ -52,8 +52,8 @@ public class RecordBeforeDeleteUpdaterTest {
 
 		assertEquals(authToken, factoredUpdater.authToken);
 		assertSame(dataGroup, factoredUpdater.record);
-		assertEquals("someRecordType", factoredUpdater.type);
-		assertEquals("someRecordId", factoredUpdater.id);
+		assertEquals(factoredUpdater.type, "someRecordType");
+		assertEquals(factoredUpdater.id, "someRecordId");
 	}
 
 	private DataGroup createDataGroup() {
