@@ -24,9 +24,7 @@
 <body>
 	<h1>Alvin REST Api</h1>
 
-	<h1>Examples</h1>
 
-	Examples can be found in our <a href="http://epc.ub.uu.se/fitnesse/TheRestTests">acceptance tests</a>
 	<h3>Create</h3>
 	To create data, use: <br> POST http://epc.ub.uu.se/alvin/rest/record/theTypeYouWantToCreate
 	<br>
@@ -53,11 +51,6 @@
 	<br>
 	<br>
 	
-	<h2>Use these tools</h2>
-	We recommend using a dedicated REST client, e.g. the Firefox addon "RESTClient" to get accustomed to the API.
-	<br> For increased readability of the JSON responses, you can use <a href="http://www.jsoneditoronline.org/">http://www.jsoneditoronline.org/</a>.
-	<br>
-	
-	
+	Examples can be found in our <a href="http://epc.ub.uu.se/fitnesse/TheRestTests">acceptance tests</a>
 </body>
 </html>
