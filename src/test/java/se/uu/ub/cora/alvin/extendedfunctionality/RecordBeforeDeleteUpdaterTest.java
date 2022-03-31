@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2020 Uppsala University Library
+ * Copyright 2019, 2020, 2022 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -29,6 +29,7 @@ import se.uu.ub.cora.data.DataAtomic;
 import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.dependency.SpiderInstanceProvider;
+import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityData;
 
 public class RecordBeforeDeleteUpdaterTest {
 	SpiderDependencyProvider dependencyProvider;
@@ -46,7 +47,10 @@ public class RecordBeforeDeleteUpdaterTest {
 		RecordBeforeDeleteUpdater updater = new RecordBeforeDeleteUpdater();
 		String authToken = "someAuthToken";
 		DataGroup dataGroup = createDataGroup();
-		updater.useExtendedFunctionality(authToken, dataGroup);
+		ExtendedFunctionalityData exData = new ExtendedFunctionalityData();
+		exData.authToken = authToken;
+		exData.dataGroup = dataGroup;
+		updater.useExtendedFunctionality(exData);
 		SpiderRecordUpdaterSpy factoredUpdater = (SpiderRecordUpdaterSpy) spiderInstanceFactory.factoredRecordUpdaters
 				.get(0);
 

@@ -36,22 +36,23 @@
 	
 	<properties>
 		<!-- compile -->
-		<coralog4j.version>2.6.0</coralog4j.version>
+		<coralog4j.version>2.7.0</coralog4j.version>
 		<json.version>3.1.0</json.version>
-		<spider.version>5.4.0</spider.version>
-		<therest.version>7.1.0</therest.version>
+		<spider.version>6.0-SNAPSHOT</spider.version>
+		<therest.version>8.0-SNAPSHOT</therest.version>
 		<beefeater.version>3.6.0</beefeater.version>
-		<bookkeeper.version>6.4.0</bookkeeper.version>
-		<basicdata.version>3.4.0</basicdata.version>
+		<bookkeeper.version>6.5.0</bookkeeper.version>
+		<basicdata.version>3.5.0</basicdata.version>
 		<gatekeeper.version>3.10.0</gatekeeper.version>
-		<gatekeeperclient.version>3.12.0</gatekeeperclient.version>
+		<gatekeeperclient.version>3.13.0</gatekeeperclient.version>
 		<alvinmixedstorage.version>3.10.0</alvinmixedstorage.version>
-		<storage.version>5.2.0</storage.version>
+		<storage.version>6.0-SNAPSHOT</storage.version>
 		<basicstorage.version>5.3.0</basicstorage.version>
-		<solrsearch.version>4.4.0</solrsearch.version>
-		<metacreator.version>4.5.0</metacreator.version>
-		<httphandler.version>2.4.0</httphandler.version>
+		<solrsearch.version>4.5.0</solrsearch.version>
+		<metacreator.version>4.6.0</metacreator.version>
+		<httphandler.version>2.5-SNAPSHOT</httphandler.version>
 		<apptokenstorage.version>2.4.0</apptokenstorage.version>
+		<fedoraarchive.version>1.0-SNAPSHOT</fedoraarchive.version>  
 		<servlet-api.version>5.0.0</servlet-api.version>
 	</properties>
 
@@ -150,12 +151,18 @@
 			<artifactId>httphandler</artifactId>
 			<version>${httphandler.version}</version>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>apptokenstorage</artifactId>
 			<version>${apptokenstorage.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>fedoraarchive</artifactId>
+			<version>${fedoraarchive.version}</version>
+			<scope>runtime</scope>
+		</dependency> 
 		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>

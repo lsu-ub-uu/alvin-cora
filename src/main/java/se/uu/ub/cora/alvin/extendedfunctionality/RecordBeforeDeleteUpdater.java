@@ -1,5 +1,5 @@
 /*
- * Copyright 2019, 2020 Uppsala University Library
+ * Copyright 2019, 2020, 2022 Uppsala University Library
  *
  * This file is part of Cora.
  *
@@ -21,22 +21,24 @@ package se.uu.ub.cora.alvin.extendedfunctionality;
 import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.spider.dependency.SpiderInstanceProvider;
 import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionality;
+import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityData;
 import se.uu.ub.cora.spider.record.RecordUpdater;
 
 public class RecordBeforeDeleteUpdater implements ExtendedFunctionality {
 
+	private String extractType(DataGroup recordInfo) {
+		DataGroup type = recordInfo.getFirstGroupWithNameInData("type");
+		return type.getFirstAtomicValueWithNameInData("linkedRecordId");
+	}
+
 	@Override
-	public void useExtendedFunctionality(String authToken, DataGroup spiderDataGroup) {
+	public void useExtendedFunctionality(ExtendedFunctionalityData data) {
+		DataGroup spiderDataGroup = data.dataGroup;
 		DataGroup recordInfo = spiderDataGroup.getFirstGroupWithNameInData("recordInfo");
 		String recordType = extractType(recordInfo);
 		String recordId = recordInfo.getFirstAtomicValueWithNameInData("id");
 		RecordUpdater spiderRecordUpdater = SpiderInstanceProvider.getRecordUpdater();
-		spiderRecordUpdater.updateRecord(authToken, recordType, recordId, spiderDataGroup);
-	}
-
-	private String extractType(DataGroup recordInfo) {
-		DataGroup type = recordInfo.getFirstGroupWithNameInData("type");
-		return type.getFirstAtomicValueWithNameInData("linkedRecordId");
+		spiderRecordUpdater.updateRecord(data.authToken, recordType, recordId, spiderDataGroup);
 	}
 
 }
