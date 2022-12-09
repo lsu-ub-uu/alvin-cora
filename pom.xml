@@ -39,16 +39,16 @@
 		<json.version>3.7.0</json.version>
 		<initialize.version>1.3.0</initialize.version>
 		<spider.version>7.8.0</spider.version>
-		<therest.version>9.8.0</therest.version>
+		<therest.version>9.9.0</therest.version>
 		<beefeater.version>3.11.0</beefeater.version>
 		<bookkeeper.version>9.0.0</bookkeeper.version>
 		<basicdata.version>5.4.0</basicdata.version>
 		<storage.version>8.0.0</storage.version>
 		<metadatastorage.version>1.5.0</metadatastorage.version>
 		<searchstorage.version>3.19.0</searchstorage.version>
-		<basicstorage.version>7.5.0</basicstorage.version>
+		<basicstorage.version>7.6.0</basicstorage.version>
 		<sqldatabase.version>7.0.0</sqldatabase.version>
-		<sqlstorage.version>2.7.0</sqlstorage.version>
+		<sqlstorage.version>2.8.0</sqlstorage.version>
 		<gatekeeper.version>4.3.0</gatekeeper.version>
 		<gatekeeperclient.version>4.6.0</gatekeeperclient.version>
 		<solrsearch.version>5.4.0</solrsearch.version>
