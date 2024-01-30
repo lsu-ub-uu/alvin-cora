@@ -57,7 +57,7 @@
 		<servlet-api.version>5.0.0</servlet-api.version>
 		<fedoraarchive.version>1.12-SNAPSHOT</fedoraarchive.version>  
 		<tikacontentanalyzer.version>1.0.0</tikacontentanalyzer.version>  
-		<xmlconverter.version>2.9.0</xmlconverter.version>
+		<xmlconverter.version>2.10-SNAPSHOT</xmlconverter.version>
 		<rabbitmq.version>3.0-SNAPSHOT</rabbitmq.version>
 	</properties>
 
