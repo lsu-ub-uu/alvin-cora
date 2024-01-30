@@ -42,7 +42,7 @@
 		<therest.version>9.12-SNAPSHOT</therest.version>
 		<beefeater.version>3.13.0</beefeater.version>
 		<bookkeeper.version>9.2.0</bookkeeper.version>
-		<basicdata.version>5.6.0</basicdata.version>
+		<basicdata.version>5.7-SNAPSHOT</basicdata.version>
 		<storage.version>9.1-SNAPSHOT</storage.version>
 		<metadatastorage.version>1.7.0</metadatastorage.version>
 		<searchstorage.version>3.21.0</searchstorage.version>
