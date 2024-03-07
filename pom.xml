@@ -26,7 +26,7 @@
 	</parent>
 
 	<artifactId>alvin</artifactId>
-	<version>6.4.0-SNAPSHOT</version>
+	<version>6.4.0</version>
 	<packaging>war</packaging>
 
 	<name>Alvin Cora</name>
@@ -65,7 +65,7 @@
 		<connection>scm:git:https://github.com/lsu-ub-uu/alvin-cora.git</connection>
 		<developerConnection>scm:git:https://github.com/lsu-ub-uu/alvin-cora.git</developerConnection>
 		<url>https://github.com/lsu-ub-uu/alvin-cora.git</url>
-	  <tag>release/6.4</tag>
+	  <tag>alvin-6.4.0</tag>
   </scm>
 
 	<dependencies>
