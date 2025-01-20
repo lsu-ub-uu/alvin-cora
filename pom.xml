@@ -38,11 +38,13 @@
 		<coralog4j.version>2.16.0</coralog4j.version>
 		<json.version>3.10.0</json.version>
 		<initialize.version>1.6.0</initialize.version>
-		<spider.version>9.4.0</spider.version>
+		<spider.version>9.5-SNAPSHOT</spider.version>
 		<therest.version>11.4.0</therest.version>
 		<beefeater.version>3.13.0</beefeater.version>
 		<bookkeeper.version>10.1.0</bookkeeper.version>
 		<basicdata.version>6.0.0</basicdata.version>
+		<coradata.version>10.0.0</coradata.version>
+		<coradata-spies.version>2.0.0</coradata-spies.version>
 		<storage.version>9.5.0</storage.version>
 		<metadatastorage.version>1.9.0</metadatastorage.version>
 		<searchstorage.version>3.22.0</searchstorage.version>
@@ -61,6 +63,8 @@
 		<xmlconverter.version>3.1.0</xmlconverter.version>
 		<rabbitmq.version>3.0.0</rabbitmq.version>
 		<iiif.version>1.0.0</iiif.version>
+		<search.version>6.0.0</search.version>
+		<storagespies.version>1.12.0</storagespies.version>
 	</properties>
 
 	<scm>
@@ -87,7 +91,6 @@
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>json</artifactId>
 			<version>${json.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
@@ -99,19 +102,16 @@
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>spider</artifactId>
 			<version>${spider.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>beefeater</artifactId>
 			<version>${beefeater.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>bookkeeper</artifactId>
 			<version>${bookkeeper.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
@@ -121,11 +121,20 @@
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>storage</artifactId>
-			<version>${storage.version}</version>
-			<scope>runtime</scope>
+			<artifactId>coradata</artifactId>
+			<version>${coradata.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>storage</artifactId>
+			<version>${storage.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>storage-spies</artifactId>
+			<version>${storagespies.version}</version>
+			<scope>test</scope>
+		</dependency>		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>metadatastorage</artifactId>
 			<version>${metadatastorage.version}</version>
@@ -232,6 +241,11 @@
 			<artifactId>iiif</artifactId>
 			<version>${iiif.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+				<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>search</artifactId>
+			<version>${search.version}</version>
 		</dependency>
 	</dependencies>
 </project>
