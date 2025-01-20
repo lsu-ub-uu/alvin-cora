@@ -10,8 +10,9 @@ import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityData;
 public class UrnExtendedFunctionality implements ExtendedFunctionality {
 
 	private static final String ID = "id";
-	private static final String RECORD_INFO = "recordInfo";
 	private static final String URN = "urn";
+	private static final String RECORD_INFO = "recordInfo";
+	private static final String URN_FORMAT = "urn:nbn:se:alvin:portal:record-";
 
 	@Override
 	public void useExtendedFunctionality(ExtendedFunctionalityData data) {
@@ -39,7 +40,7 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 	private void createAndAddUrn(DataRecordGroup recordGroup, DataGroup recordInfoGroup) {
 		String recordId = recordInfoGroup.getFirstAtomicValueWithNameInData(ID);
 		DataAtomic urnNumber = DataProvider.createAtomicUsingNameInDataAndValue(URN,
-				"urn:nbn:se:alvin:portal:record-" + recordId);
+				URN_FORMAT + recordId);
 
 		recordInfoGroup.addChild(urnNumber);
 	}

@@ -12,6 +12,7 @@ import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityPosition;
 
 public class UrnExtendedFunctionalityFactory implements ExtendedFunctionalityFactory {
 
+	private static final String ALVIN_RECORD = "alvin-record";
 	private List<ExtendedFunctionalityContext> contexts = new ArrayList<>();
 
 	@Override
@@ -30,7 +31,7 @@ public class UrnExtendedFunctionalityFactory implements ExtendedFunctionalityFac
 	}
 
 	private void createContext(ExtendedFunctionalityPosition position) {
-		contexts.add(new ExtendedFunctionalityContext(position, "alvin-record", 0));
+		contexts.add(new ExtendedFunctionalityContext(position, ALVIN_RECORD, 0));
 	}
 
 	@Override
