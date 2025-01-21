@@ -29,7 +29,7 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 	private void possiblyAddUrnNumber(DataRecordGroup recordGroup) {
 		DataGroup recordInfoGroup = recordGroup.getFirstGroupWithNameInData(RECORD_INFO);
 		if (!recordInfoHasUrn(recordInfoGroup)) {
-			createAndAddUrn(recordGroup, recordInfoGroup);
+			createAndAddUrn(recordInfoGroup);
 		}
 	}
 
@@ -37,7 +37,7 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 		return recordInfoGroup.containsChildWithNameInData(URN);
 	}
 
-	private void createAndAddUrn(DataRecordGroup recordGroup, DataGroup recordInfoGroup) {
+	private void createAndAddUrn(DataGroup recordInfoGroup) {
 		String recordId = recordInfoGroup.getFirstAtomicValueWithNameInData(ID);
 		DataAtomic urnNumber = DataProvider.createAtomicUsingNameInDataAndValue(URN,
 				URN_FORMAT + recordId);
