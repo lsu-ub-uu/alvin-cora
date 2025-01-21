@@ -47,6 +47,14 @@ public class UrnExtendedFunctionalityTest {
 	}
 
 	@Test
+	public void testRecordInfoIsNull() throws Exception {
+		extendedFunctionalityData.dataRecordGroup = null;
+
+		urnExtFunc.useExtendedFunctionality(extendedFunctionalityData);
+		someRecord.MCR.assertMethodNotCalled("getFirstGroupWithNameInData");
+	}
+
+	@Test
 	public void testRecordInfoDoesNotExist() throws Exception {
 		someRecord.MRV.setDefaultReturnValuesSupplier("containsChildWithNameInData", () -> false);
 
@@ -66,7 +74,11 @@ public class UrnExtendedFunctionalityTest {
 
 		someRecord.MCR.assertParameters("containsChildWithNameInData", 0, RECORD_INFO);
 
-		recordInfoGroup.MCR.assertMethodNotCalled("getFirstAtomicValueWithNameInData");
+		recordInfoGroup.MCR.assertMethodWasCalled("removeFirstChildWithNameInData");
+		recordInfoGroup.MCR.assertParameters("getFirstAtomicValueWithNameInData", 0, ID);
+
+		recordInfoGroup.MCR.assertMethodWasCalled("addChild");
+
 	}
 
 	@Test

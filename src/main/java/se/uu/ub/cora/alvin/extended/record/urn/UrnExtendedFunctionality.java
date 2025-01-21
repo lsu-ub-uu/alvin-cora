@@ -18,7 +18,7 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 	public void useExtendedFunctionality(ExtendedFunctionalityData data) {
 		DataRecordGroup recordGroup = data.dataRecordGroup;
 		if (hasRecordInfo(recordGroup)) {
-			possiblyAddUrnNumber(recordGroup);
+			addUrnNumber(recordGroup);
 		}
 	}
 
@@ -26,10 +26,15 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 		return recordGroup != null && recordGroup.containsChildWithNameInData(RECORD_INFO);
 	}
 
-	private void possiblyAddUrnNumber(DataRecordGroup recordGroup) {
+	private void addUrnNumber(DataRecordGroup recordGroup) {
 		DataGroup recordInfoGroup = recordGroup.getFirstGroupWithNameInData(RECORD_INFO);
-		if (!recordInfoHasUrn(recordInfoGroup)) {
-			createAndAddUrn(recordInfoGroup);
+		removeUrnIfPresent(recordInfoGroup);
+		createAndAddUrn(recordInfoGroup);
+	}
+
+	private void removeUrnIfPresent(DataGroup recordInfoGroup) {
+		if (recordInfoHasUrn(recordInfoGroup)) {
+			recordInfoGroup.removeFirstChildWithNameInData(URN);
 		}
 	}
 
