@@ -134,7 +134,8 @@
 			<artifactId>storage-spies</artifactId>
 			<version>${storagespies.version}</version>
 			<scope>test</scope>
-		</dependency>		<dependency>
+		</dependency>		
+		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>metadatastorage</artifactId>
 			<version>${metadatastorage.version}</version>
