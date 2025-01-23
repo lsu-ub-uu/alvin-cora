@@ -12,7 +12,7 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 	private static final String ID = "id";
 	private static final String URN = "urn";
 	private static final String RECORD_INFO = "recordInfo";
-	private static final String URN_FORMAT = "urn:nbn:se:alvin:portal:record-";
+	private static final String URN_FORMAT = "urn:nbn:se:alvin:portal:record-%s";
 
 	@Override
 	public void useExtendedFunctionality(ExtendedFunctionalityData data) {
@@ -45,7 +45,7 @@ public class UrnExtendedFunctionality implements ExtendedFunctionality {
 	private void createAndAddUrn(DataGroup recordInfoGroup) {
 		String recordId = recordInfoGroup.getFirstAtomicValueWithNameInData(ID);
 		DataAtomic urnNumber = DataProvider.createAtomicUsingNameInDataAndValue(URN,
-				URN_FORMAT + recordId);
+				String.format(URN_FORMAT, recordId));
 
 		recordInfoGroup.addChild(urnNumber);
 	}
