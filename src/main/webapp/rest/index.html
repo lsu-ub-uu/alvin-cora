@@ -54,6 +54,7 @@
 			<li><a href="#create-record">1. Create record</a></li>
 			<li><a href="#read-record-list">2. Read record list</a></li>
 			<li><a href="#read-single-record">3. Read single record</a></li>
+			<li><a href="#read-single-decorated-record">3. Read single decorated record</a></li>
 			<li><a href="#read-incoming-record-links">4. Read incoming record links</a></li>
 			<li><a href="#delete-record">5. Delete record</a></li>
 			<li><a href="#update-record">6. Update record</a></li>
@@ -139,7 +140,6 @@
 				</ul>
 			</section>
 
-			<!-- 1. Create Record -->
 			<div class="endpoint" id="create-record">
 				<h2>1. Create Record</h2>
 				<h3>Description</h3>
@@ -186,7 +186,6 @@
 					plain text.</p>
 			</div>
 
-			<!-- 2. Read Record List -->
 			<div class="endpoint" id="read-record-list">
 				<h2>2. Read Record List</h2>
 				<h3>Description</h3>
@@ -217,7 +216,6 @@
 					text.</p>
 			</div>
 
-			<!-- 3. Read Single Record -->
 			<div class="endpoint" id="read-single-record">
 				<h2>3. Read Single Record</h2>
 				<h3>Description</h3>
@@ -248,9 +246,48 @@
 					text.</p>
 			</div>
 
-			<!-- 4. Read Incoming Record Links -->
+			<section class="endpoint" id="read-single-decorated-record">
+				<h2>4. Read Single Decorated Record</h2>
+				<h3>Description</h3>
+				<p>Retrieves a specific record by its type and identifier. The record is decorated with text
+					that identifies all fields and includes linked records. The depth of linked records is 2,
+					meaning the parent record will include linked records up to its grandchildren.</p>
+				<h3>Endpoint</h3>
+				<pre>GET {baseUrl}/record/{type}/{id}</pre>
+				<h3>Headers</h3>
+				<ul>
+					<li><strong>authToken</strong> <code class="example-data">usersAuthToken</code></li>
+				</ul>
+				<ul>
+					<li><strong>accept</strong>
+						<ul>
+							<li><code>application/vnd.cora.record-decorated+xml</code> <em>Read decorated
+									record using XML format.</em></li>
+							<li><code>application/vnd.cora.record-decorated+json</code> <em>Read decorated
+									record using JSON format.</em></li>
+							<li><code>application/xml</code> <em>(Browser-friendly fallback)</em></li>
+						</ul></li>
+				</ul>
+				<h3>Path Parameters</h3>
+				<ul>
+					<li><code>type</code> (string) – The record type.</li>
+					<li><code>id</code> (string) – The record identifier.</li>
+				</ul>
+
+				<h3>Response</h3>
+				<ul>
+					<li><code>200 OK</code> – Record successfully retrieved and decorated.</li>
+					<li><code>401 Unauthorized</code> – Missing or invalid <code>authToken</code>.</li>
+					<li><code>403 Forbidden</code> – The authenticated user does not have the necessary
+						permissions to access the record.</li>
+					<li><code>404 Not Found</code> – Record not found.</li>
+					<li><code>500 Internal Server Error</code> – An unexpected error occurred on the server
+						while processing the request.</li>
+				</ul>
+			</section>
+
 			<div class="endpoint" id="read-incoming-record-links">
-				<h2>4. Read Incoming Record Links</h2>
+				<h2>5. Read Incoming Record Links</h2>
 				<h3>Description</h3>
 				<p>Fetches a list of incoming record links for the specified record. Each link shows a
 					record that references the target record.</p>
@@ -280,9 +317,8 @@
 					text.</p>
 			</div>
 
-			<!-- 5. Delete Record -->
 			<div class="endpoint" id="delete-record">
-				<h2>5. Delete Record</h2>
+				<h2>6. Delete Record</h2>
 				<h3>Description</h3>
 				<p>Deletes a specific record.</p>
 				<h3>Endpoint</h3>
@@ -310,9 +346,8 @@
 					text.</p>
 			</div>
 
-			<!-- 6. Update Record -->
 			<div class="endpoint" id="update-record">
-				<h2>6. Update Record</h2>
+				<h2>7. Update Record</h2>
 				<h3>Description</h3>
 				<p>Updates an existing record.</p>
 				<h3>Endpoint</h3>
@@ -354,9 +389,8 @@
 					text.</p>
 			</div>
 
-			<!-- 7. Download Resource -->
 			<div class="endpoint" id="download-resource">
-				<h2>7. Download Resource</h2>
+				<h2>8. Download Resource</h2>
 				<h3>Description</h3>
 				<p>Downloads a resource file that is attached to a record.</p>
 				<h3>Endpoint</h3>
@@ -392,9 +426,8 @@
 					text.</p>
 			</div>
 
-			<!-- 8. Upload Resource -->
 			<div class="endpoint" id="upload-resource">
-				<h2>8. Upload Resource</h2>
+				<h2>9. Upload Resource</h2>
 				<h3>Description</h3>
 				<p>Uploads a resource (file) and associates it with a record.</p>
 				<h3>Endpoint</h3>
@@ -427,9 +460,8 @@
 					text.</p>
 			</div>
 
-			<!-- 9. Search Record -->
 			<div class="endpoint" id="search-record">
-				<h2>9. Search Record</h2>
+				<h2>10. Search Record</h2>
 				<h3>Description</h3>
 				<p>Searches for records based on criteria passed in the request.</p>
 				<h3>Endpoint</h3>
@@ -457,9 +489,8 @@
 					text.</p>
 			</div>
 
-			<!-- 10. Validate Record -->
 			<div class="endpoint" id="validate-record">
-				<h2>10. Validate Record</h2>
+				<h2>11. Validate Record</h2>
 				<h3>Description</h3>
 				<p>Validates a record using a work order format. The work order includes two parts:</p>
 				<ul>
@@ -507,9 +538,8 @@
 					text.</p>
 			</div>
 
-			<!-- 11. Batch Index Records -->
 			<div class="endpoint" id="batch-index-records">
-				<h2>11. Batch Index Records</h2>
+				<h2>12. Batch Index Records</h2>
 				<h3>Description</h3>
 				<p>Starts a batch indexing job for all records of a given type. Optional index settings can
 					be provided; if none are supplied, a default empty settings object is used.</p>
