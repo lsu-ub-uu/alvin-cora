@@ -23,7 +23,6 @@ import se.uu.ub.cora.storage.RecordStorage;
 import se.uu.ub.cora.storage.StreamStorage;
 import se.uu.ub.cora.storage.archive.RecordArchive;
 import se.uu.ub.cora.storage.archive.ResourceArchive;
-import se.uu.ub.cora.storage.idgenerator.RecordIdGenerator;
 
 public class SpiderDependencyProviderSpy implements SpiderDependencyProvider {
 
@@ -41,12 +40,6 @@ public class SpiderDependencyProviderSpy implements SpiderDependencyProvider {
 
 	@Override
 	public StreamStorage getStreamStorage() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public RecordIdGenerator getRecordIdGenerator() {
 		// TODO Auto-generated method stub
 		return null;
 	}
