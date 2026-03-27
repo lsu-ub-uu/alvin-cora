@@ -41,26 +41,26 @@ public class UrnExtendedFunctionalityFactoryTest {
 	private SpiderDependencyProvider dependencyProvider;
 
 	@BeforeMethod
-	public void beforeMethod() throws Exception {
+	public void beforeMethod() {
 		factory = new UrnExtendedFunctionalityFactory();
 		dependencyProvider = new SpiderDependencyProviderSpy();
 		factory.initializeUsingDependencyProvider(dependencyProvider);
 	}
 
 	@Test
-	public void testInit() throws Exception {
+	public void testInit() {
 		assertTrue(factory instanceof UrnExtendedFunctionalityFactory);
 	}
 
 	@Test
 	public void testGetExtendedFunctionalityContextsForCreate() {
-		assertContext(ExtendedFunctionalityPosition.CREATE_BEFORE_STORE);
+		assertContext(ExtendedFunctionalityPosition.CREATE_BEFORE_COLLECT_DATA);
 	}
 
 	@Test
-	public void testFactorCreate() throws Exception {
-		List<ExtendedFunctionality> functionalities = factory.factor(
-				ExtendedFunctionalityPosition.CREATE_AFTER_METADATA_VALIDATION, ALVIN_RECORD);
+	public void testFactorCreate() {
+		List<ExtendedFunctionality> functionalities = factory
+				.factor(ExtendedFunctionalityPosition.CREATE_BEFORE_COLLECT_DATA, ALVIN_RECORD);
 		assertTrue(functionalities.get(0) instanceof UrnExtendedFunctionality);
 	}
 

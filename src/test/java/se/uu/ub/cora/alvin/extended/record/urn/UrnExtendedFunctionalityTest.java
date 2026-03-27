@@ -47,6 +47,7 @@ public class UrnExtendedFunctionalityTest {
 
 		someRecord.MRV.setDefaultReturnValuesSupplier("getFirstGroupWithNameInData",
 				() -> recordInfoGroup);
+		someRecord.MRV.setDefaultReturnValuesSupplier("getId", () -> "someId");
 
 		extendedFunctionalityData = new ExtendedFunctionalityData();
 		extendedFunctionalityData.dataRecordGroup = someRecord;
@@ -58,18 +59,22 @@ public class UrnExtendedFunctionalityTest {
 	}
 
 	@Test
-	public void testInit() throws Exception {
+	public void testInit() {
 		assertTrue(urnExtFunc instanceof ExtendedFunctionality);
 	}
 
 	@Test
-	public void testAlvinUrnNumberIsAdded() throws Exception {
+	public void testAlvinUrnNumberIsAdded() {
 		urnExtFunc.useExtendedFunctionality(extendedFunctionalityData);
 
 		someRecord.MCR.assertParameters("getFirstGroupWithNameInData", 0, RECORD_INFO);
 		someRecord.MCR.assertMethodWasCalled("getId");
 
-		recordInfoGroup.MCR.assertMethodWasCalled("addChild");
-	}
+		String urnnbnFormat = "urn:nbn:se:alvin:portal:record-%s";
+		String urnnbn = String.format(urnnbnFormat, "someId");
 
+		var urnAtomic = dataFactory.MCR
+				.assertCalledParametersReturn("factorAtomicUsingNameInDataAndValue", "urn", urnnbn);
+		recordInfoGroup.MCR.assertCalledParameters("addChild", urnAtomic);
+	}
 }

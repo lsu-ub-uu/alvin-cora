@@ -28,29 +28,23 @@ import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityData;
 
 public class UrnExtendedFunctionality implements ExtendedFunctionality {
 
-	private static final String URN = "urn";
-	private static final String RECORD_INFO = "recordInfo";
-	private static final String URN_FORMAT = "urn:nbn:se:alvin:portal:record-%s";
+	private DataRecordGroup recordGroup;
+	private DataGroup recordInfoGroup;
 
 	@Override
 	public void useExtendedFunctionality(ExtendedFunctionalityData data) {
-		DataRecordGroup recordGroup = data.dataRecordGroup;
-		createAndAddUrn(recordGroup);
+		recordGroup = data.dataRecordGroup;
+		recordInfoGroup = recordGroup.getFirstGroupWithNameInData("recordInfo");
+		createAndAddUrnnbnChild();
 	}
 
-	private void createAndAddUrn(DataRecordGroup recordGroup) {
-		DataAtomic urnNumber = createUrnNumber(recordGroup);
-		addUrnNumberToRecordInfo(recordGroup, urnNumber);
-	}
-
-	private DataAtomic createUrnNumber(DataRecordGroup recordGroup) {
-		String recordId = recordGroup.getId();
-		return DataProvider.createAtomicUsingNameInDataAndValue(URN,
-				String.format(URN_FORMAT, recordId));
-	}
-
-	private void addUrnNumberToRecordInfo(DataRecordGroup recordGroup, DataAtomic urnNumber) {
-		DataGroup recordInfoGroup = recordGroup.getFirstGroupWithNameInData(RECORD_INFO);
+	private void createAndAddUrnnbnChild() {
+		DataAtomic urnNumber = createUrnnbnChild();
 		recordInfoGroup.addChild(urnNumber);
+	}
+
+	private DataAtomic createUrnnbnChild() {
+		String urnnbn = String.format("urn:nbn:se:alvin:portal:record-%s", recordGroup.getId());
+		return DataProvider.createAtomicUsingNameInDataAndValue("urn", urnnbn);
 	}
 }
