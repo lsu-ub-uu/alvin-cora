@@ -1,11 +1,11 @@
+import se.uu.ub.cora.alvin.extended.record.urn.UrnExtendedFunctionalityFactory;
+import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityFactory;
 
-module se.uu.ub.cora.urnnbn {
+module se.uu.ub.cora.alvin {
+	requires se.uu.ub.cora.spider;
 	requires se.uu.ub.cora.data;
-	requires java.net.http;
-	requires jakarta.servlet;
-	requires java.base;
-	requires se.uu.ub.cora.logger;
-	requires jakarta.ws.rs;
-	requires se.uu.ub.cora.initialize;
+	requires se.uu.ub.cora.storage;
+
+	provides ExtendedFunctionalityFactory with UrnExtendedFunctionalityFactory;
 
 }
