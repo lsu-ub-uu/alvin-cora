@@ -25,17 +25,22 @@
 		<version>3.2.0</version>
 	</parent>
 
-	<artifactId>alvin</artifactId>
-	<version>6.61-SNAPSHOT</version>
+	<artifactId>urnnbn</artifactId>
+	<version>0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
 
-	<name>Alvin Cora</name>
+	<name>Cora URN-NBN</name>
 	<build>
-		<finalName>alvin</finalName>
+		<finalName>urnnbn</finalName>
 	</build>
 	
 	<properties>
 		<coralog4j.version>2.16.0</coralog4j.version>
+		
+		<jaxb-api.version>2.3.1</jaxb-api.version>
+		<servlet-api.version>6.1.0</servlet-api.version>
+		<jersey.version>4.0.2</jersey.version>
+		
 		<json.version>3.10.0</json.version>
 		<initialize.version>1.8.0</initialize.version>
 		<spider.version>10.10.0</spider.version>
@@ -66,13 +71,16 @@
 		<iiif.version>1.1.0</iiif.version>
 		<search.version>6.0.0</search.version>
 		<storagespies.version>1.15.0</storagespies.version>
+		
+		<initialize.version>1.7.0</initialize.version>
+		<initialize-spies.version>1.6.0</initialize-spies.version>
+		
 	</properties>
 
 	<scm>
-		<connection>scm:git:https://github.com/lsu-ub-uu/alvin-cora.git</connection>
-		<developerConnection>scm:git:https://github.com/lsu-ub-uu/alvin-cora.git</developerConnection>
-		<url>https://github.com/lsu-ub-uu/alvin-cora.git</url>
-	  <tag>release/2.4</tag>
+		<connection>scm:git:https://github.com/lsu-ub-uu/cora-urnnbn.git</connection>
+		<developerConnection>scm:git:https://github.com/lsu-ub-uu/cora-urnnbn.git</developerConnection>
+		<url>https://github.com/lsu-ub-uu/cora-urnnbn.git</url>
   </scm>
 
 	<dependencies>
@@ -80,14 +88,37 @@
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>log4j</artifactId>
 			<version>${coralog4j.version}</version>
-			<scope>runtime</scope>
+			<scope>compile</scope>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.glassfish.jersey.containers</groupId>
+			<artifactId>jersey-container-servlet</artifactId>
+			<version>${jersey.version}</version>
+			<scope>compile</scope>
 		</dependency>
 		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>therest</artifactId>
-			<version>${therest.version}</version>
-			<scope>runtime</scope>
+			<groupId>org.glassfish.jersey.media</groupId>
+			<artifactId>jersey-media-multipart</artifactId>
+			<version>${jersey.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-common</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.inject</groupId>
+			<artifactId>jersey-hk2</artifactId>
+			<version>${jersey.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>jakarta.servlet</groupId>
+			<artifactId>jakarta.servlet-api</artifactId>
+			<version>${servlet-api.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>json</artifactId>
@@ -101,21 +132,6 @@
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>spider</artifactId>
-			<version>${spider.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>beefeater</artifactId>
-			<version>${beefeater.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>bookkeeper</artifactId>
-			<version>${bookkeeper.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>basicdata</artifactId>
 			<version>${basicdata.version}</version>
 			<scope>runtime</scope>
@@ -124,71 +140,6 @@
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>coradata</artifactId>
 			<version>${coradata.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>storage</artifactId>
-			<version>${storage.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>storage-spies</artifactId>
-			<version>${storagespies.version}</version>
-			<scope>test</scope>
-		</dependency>		
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>metadatastorage</artifactId>
-			<version>${metadatastorage.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>searchstorage</artifactId>
-			<version>${searchstorage.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>basicstorage</artifactId>
-			<version>${basicstorage.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>sqldatabase</artifactId>
-			<version>${sqldatabase.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>sqlstorage</artifactId>
-			<version>${sqlstorage.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>gatekeeper</artifactId>
-			<version>${gatekeeper.version}</version>
- 			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>gatekeeperclient</artifactId>
-			<version>${gatekeeperclient.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>solrsearch</artifactId>
-			<version>${solrsearch.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>metacreator</artifactId>
-			<version>${metacreator.version}</version>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
@@ -204,38 +155,8 @@
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>fedoraarchive</artifactId>
-			<version>${fedoraarchive.version}</version>
-			<scope>runtime</scope>
-		</dependency> 
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>fedora</artifactId>
-			<version>${fedora.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>tikacontentanalyzer</artifactId>
-			<version>${tikacontentanalyzer.version}</version>
-			<scope>runtime</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>xerces</groupId>
-					<artifactId>xercesImpl</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency> 
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>xmlconverter</artifactId>
 			<version>${xmlconverter.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>idsource</artifactId>
-			<version>${idsource.version}</version>
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
@@ -244,16 +165,18 @@
 			<version>${rabbitmq.version}</version>
 			<scope>runtime</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>iiif</artifactId>
-			<version>${iiif.version}</version>
-			<scope>runtime</scope>
+			<artifactId>initialize</artifactId>
+			<version>${initialize.version}</version>
+			<scope>compile</scope>
 		</dependency>
-				<dependency>
+		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>search</artifactId>
-			<version>${search.version}</version>
+			<artifactId>initialize-spies</artifactId>
+			<version>${initialize-spies.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
