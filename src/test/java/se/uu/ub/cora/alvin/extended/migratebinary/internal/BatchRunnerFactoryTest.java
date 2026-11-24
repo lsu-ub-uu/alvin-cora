@@ -42,7 +42,7 @@ public class BatchRunnerFactoryTest {
 		BatchRunnerFactory factory = new BatchRunnerFactoryImp(dependencyProvider);
 		BatchJob indexBatchJob = new BatchJob("someRecordType", 10, new Filter());
 
-		IndexBatchJobRunner runner = (IndexBatchJobRunner) factory.factor(indexBatchJob);
+		BatchJobRunner runner = (BatchJobRunner) factory.factor(indexBatchJob);
 
 		assertSame(runner.getIndexBatchJob(), indexBatchJob);
 		assertSame(runner.getDependencyProvider(), dependencyProvider);
@@ -50,7 +50,7 @@ public class BatchRunnerFactoryTest {
 		assertCorrectIndexBatchJobStorer(runner);
 	}
 
-	private void assertCorrectIndexBatchJobStorer(IndexBatchJobRunner runner) {
+	private void assertCorrectIndexBatchJobStorer(BatchJobRunner runner) {
 		IndexBatchJobStorer batchJobStorer = (IndexBatchJobStorer) runner.getBatchJobStorer();
 		assertTrue(batchJobStorer instanceof IndexBatchJobStorer);
 		assertTrue(batchJobStorer

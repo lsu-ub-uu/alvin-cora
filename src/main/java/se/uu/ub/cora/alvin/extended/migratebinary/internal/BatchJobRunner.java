@@ -32,7 +32,7 @@ import se.uu.ub.cora.storage.Filter;
 import se.uu.ub.cora.storage.RecordStorage;
 import se.uu.ub.cora.storage.StorageReadResult;
 
-public class IndexBatchJobRunner implements BatchRunner, Runnable {
+public class BatchJobRunner implements BatchRunner, Runnable {
 
 	private static final long FROM_NUMBER = 1;
 	private static final long TO_NUMBER = 1000;
@@ -48,7 +48,7 @@ public class IndexBatchJobRunner implements BatchRunner, Runnable {
 	private List<Error> errors = new ArrayList<>();
 	private long numberRequestedFromListing = 0;
 
-	public IndexBatchJobRunner(SpiderDependencyProvider dependencyProvider, BatchJobStorer storer,
+	public BatchJobRunner(SpiderDependencyProvider dependencyProvider, BatchJobStorer storer,
 			BatchJob indexBatchJob) {
 		this.dependencyProvider = dependencyProvider;
 		this.storer = storer;
@@ -78,7 +78,7 @@ public class IndexBatchJobRunner implements BatchRunner, Runnable {
 
 	private void readListAndIndexDataInBatches(String metadataId) {
 		try {
-			while (numberRequestedFromListing < indexBatchJob.totalNumberToIndex) {
+			while (numberRequestedFromListing < indexBatchJob.totalNumberToProcess) {
 				indexOneBatch(metadataId);
 			}
 		} catch (Exception e) {
@@ -103,8 +103,8 @@ public class IndexBatchJobRunner implements BatchRunner, Runnable {
 	}
 
 	private void possiblySetToNumToTotalNumberToIndex() {
-		if (indexBatchJob.totalNumberToIndex < to) {
-			to = indexBatchJob.totalNumberToIndex;
+		if (indexBatchJob.totalNumberToProcess < to) {
+			to = indexBatchJob.totalNumberToProcess;
 		}
 	}
 
@@ -171,8 +171,8 @@ public class IndexBatchJobRunner implements BatchRunner, Runnable {
 	}
 
 	private long possiblySetToNoToTotalNumberOfRecords(long to) {
-		if (to > indexBatchJob.totalNumberToIndex) {
-			to = indexBatchJob.totalNumberToIndex;
+		if (to > indexBatchJob.totalNumberToProcess) {
+			to = indexBatchJob.totalNumberToProcess;
 		}
 		return to;
 	}

@@ -93,7 +93,7 @@ public class CompleteMigrateBinaryExtendedFunctionalityTest {
 	}
 
 	private void assertTotalNoOfMatches() {
-		int totalNo = 2;
+		long totalNo = 2;
 		var totalAtomic = dataFactory.MCR.assertCalledParametersReturn(
 				"factorAtomicUsingNameInDataAndValue", "totalNumberToProcess", "2");
 		dataRecordGroup.MCR.assertCalledParameters("addChild", totalAtomic);

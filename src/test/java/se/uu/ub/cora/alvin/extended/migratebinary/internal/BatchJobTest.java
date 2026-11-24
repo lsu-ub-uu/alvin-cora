@@ -42,3 +42,5 @@ public class BatchJobTest {
 
 	}
 }
+
+dataRecordGroup.addChild(createAtomicWithZeroValue("numberOfProcessedRecords"));dataRecordGroup.addChild(createAtomicWithZeroValue("numberOfMigratedBinaries"));dataRecordGroup.addChild(createAtomicWithZeroValue("amountOfMigratedData"));dataRecordGroup.addChild(createAtomic("status","started"));

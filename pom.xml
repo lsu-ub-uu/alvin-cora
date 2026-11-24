@@ -35,6 +35,7 @@
 	</build>
 	
 	<properties>
+		<logger.version>2.10.0</logger.version>
 		<coralog4j.version>2.18.0</coralog4j.version>
 		<json.version>3.11.0</json.version>
 		<initialize.version>1.8.0</initialize.version>
@@ -79,6 +80,12 @@
   </scm>
 
 	<dependencies>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>logger</artifactId>
+			<version>${logger.version}</version>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
 			<artifactId>log4j</artifactId>

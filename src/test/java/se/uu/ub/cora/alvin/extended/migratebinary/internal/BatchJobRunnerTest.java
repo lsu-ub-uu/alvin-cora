@@ -39,7 +39,7 @@ import se.uu.ub.cora.storage.Filter;
 import se.uu.ub.cora.storage.StorageReadResult;
 import se.uu.ub.cora.storage.spies.RecordStorageSpy;
 
-public class IndexBatchJobRunnerTest {
+public class BatchJobRunnerTest {
 	private static final String FINISHED = "finished";
 	private static final String STARTED = "started";
 	private static final int TOTAL_NUMBER_TO_INDEX = 11700;
@@ -48,9 +48,9 @@ public class IndexBatchJobRunnerTest {
 	private Filter indexBatchJobFilter;
 	private FilterRecorderRecordStorage recordStorage;
 	private BatchJob indexBatchJob;
-	private IndexBatchJobRunner batchRunner;
-	private RecordIndexerSpy recordIndexer;
-	private DataGroupTermCollectorSpy termCollector;
+	private BatchJobRunner batchRunner;
+	// private RecordIndexerSpy recordIndexer;
+	// private DataGroupTermCollectorSpy termCollector;
 	private IndexBatchJobStorerSpy storerSpy;
 	long lastLoopBeforeEnd;
 
@@ -58,7 +58,7 @@ public class IndexBatchJobRunnerTest {
 	private int totalNumberOfMatches = 2;
 	private int numberToReturnForReadList = 2;
 	private List<DataRecordGroup> listOfDataRecordGroups = new ArrayList<>();
-	private RecordTypeHandlerOldSpy recordTypeHandlerSpy;
+	// private RecordTypeHandlerSpy recordTypeHandlerSpy;
 
 	@BeforeMethod
 	public void setUp() {
@@ -66,8 +66,8 @@ public class IndexBatchJobRunnerTest {
 		createDefaultParameters();
 		setUpSpies();
 		storerSpy = new IndexBatchJobStorerSpy();
-		batchRunner = new IndexBatchJobRunner(dependencyProvider, storerSpy, indexBatchJob);
-		lastLoopBeforeEnd = (indexBatchJob.totalNumberToIndex / INDEX_BATCH_SIZE);
+		batchRunner = new BatchJobRunner(dependencyProvider, storerSpy, indexBatchJob);
+		lastLoopBeforeEnd = (indexBatchJob.totalNumberToProcess / INDEX_BATCH_SIZE);
 	}
 
 	private void setUpProviders() {
@@ -78,7 +78,7 @@ public class IndexBatchJobRunnerTest {
 	private void createDefaultParameters() {
 		indexBatchJobFilter = new Filter();
 		indexBatchJob = new BatchJob("someRecordType", 45, indexBatchJobFilter);
-		indexBatchJob.totalNumberToIndex = TOTAL_NUMBER_TO_INDEX;
+		indexBatchJob.totalNumberToProcess = TOTAL_NUMBER_TO_INDEX;
 	}
 
 	private void setUpSpies() {
@@ -89,15 +89,15 @@ public class IndexBatchJobRunnerTest {
 		recordStorage.MRV.setDefaultReturnValuesSupplier("readList",
 				() -> createSpiderReadResult());
 
-		termCollector = new DataGroupTermCollectorSpy();
-		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getDataGroupTermCollector",
-				() -> termCollector);
-		recordIndexer = new RecordIndexerSpy();
-		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordIndexer",
-				() -> recordIndexer);
-		recordTypeHandlerSpy = new RecordTypeHandlerOldSpy();
-		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordTypeHandler",
-				() -> recordTypeHandlerSpy);
+		// termCollector = new DataGroupTermCollectorSpy();
+		// dependencyProvider.MRV.setDefaultReturnValuesSupplier("getDataGroupTermCollector",
+		// () -> termCollector);
+		// recordIndexer = new RecordIndexerSpy();
+		// dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordIndexer",
+		// () -> recordIndexer);
+		// recordTypeHandlerSpy = new RecordTypeHandlerOldSpy();
+		// dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordTypeHandler",
+		// () -> recordTypeHandlerSpy);
 	}
 
 	private StorageReadResult createSpiderReadResult() {
@@ -166,7 +166,7 @@ public class IndexBatchJobRunnerTest {
 		for (int batchLoopNumber = 0; batchLoopNumber < 12; batchLoopNumber++) {
 			toNo = from + INDEX_BATCH_SIZE - 1;
 			if (batchLoopNumber == lastLoopBeforeEnd) {
-				toNo = indexBatchJob.totalNumberToIndex;
+				toNo = indexBatchJob.totalNumberToProcess;
 			}
 			assertCorrectFilterForOneLoopInBatch(from, toNo, batchLoopNumber, methodName);
 			from = from + INDEX_BATCH_SIZE;
@@ -304,8 +304,8 @@ public class IndexBatchJobRunnerTest {
 
 	@Test
 	public void testCorrectToInFilterWhenSmallerThanDefaultTen() {
-		indexBatchJob.totalNumberToIndex = 4;
-		batchRunner = new IndexBatchJobRunner(dependencyProvider, storerSpy, indexBatchJob);
+		indexBatchJob.totalNumberToProcess = 4;
+		batchRunner = new BatchJobRunner(dependencyProvider, storerSpy, indexBatchJob);
 
 		batchRunner.run();
 

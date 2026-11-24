@@ -36,8 +36,8 @@ public class MigrateBatchHandlerImp implements MigrateBatchHandler {
 	}
 
 	@Override
-	public void runBatchJob(BatchJob indexBatchJob) {
-		BatchRunner batchRunner = factory.factor(indexBatchJob);
+	public void runBatchJob(BatchJob batchJob) {
+		BatchRunner batchRunner = factory.factor(batchJob);
 		Thread t1 = new Thread(batchRunner);
 		t1.start();
 	}

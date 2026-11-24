@@ -27,15 +27,16 @@ public class BatchJob {
 
 	public String recordId;
 	public String recordTypeToIndex;
-	public long totalNumberToIndex = 0;
+	public long totalNumberToProcess = 0;
 	public long numberOfProcessedRecords = 0;
 	public String status = "started";
 	public List<Error> errors = new ArrayList<>();
 	public Filter filter;
 
 	public BatchJob(String recordTypeToIndex, long totalNumberToIndex, Filter filter) {
+
 		this.recordTypeToIndex = recordTypeToIndex;
-		this.totalNumberToIndex = totalNumberToIndex;
+		this.totalNumberToProcess = totalNumberToIndex;
 		this.filter = filter;
 	}
 }

@@ -27,8 +27,8 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.alvin.batch.MigrateBatchHandler;
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBatchHandlerSpy;
 import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchJob;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBatchHandlerSpy;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
@@ -40,7 +40,7 @@ import se.uu.ub.cora.storage.spies.RecordStorageSpy;
 
 public class MigrateExtendedFunctionalityTest {
 
-	private static final long TOTAL_NUMBER_TO_INDEX = 32L;
+	private static final long TOTAL_NUMBER_TO_PROCESS = 32L;
 	private MigrateExtendedFunctionality extFunc;
 	private DataRecordGroupSpy dataRecordGroup;
 	private ExtendedFunctionalityData data;
@@ -68,8 +68,6 @@ public class MigrateExtendedFunctionalityTest {
 		dependencyProvider = new SpiderDependencyProviderSpy();
 
 		recordStorage = new RecordStorageSpy();
-		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordStorage",
-				() -> recordStorage);
 
 	}
 
@@ -78,31 +76,26 @@ public class MigrateExtendedFunctionalityTest {
 		data = new ExtendedFunctionalityData();
 		data.dataRecordGroup = dataRecordGroup;
 
-		// dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getId", () -> "someRecordId");
-		// dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getFirstAtomicValueWithNameInData",
-		// () -> "someRecordType", "recordTypeToIndex");
+		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getId", () -> "someRecordId");
 
-		assertEquals(data.dataSharer.get("MigrateBinary_totalNumberToProcess"), 2);
-		assertEquals(data.dataSharer.get("MigrateBinary_recordIds"), List.of("1", "2"));
+		data.dataSharer.put("MigrateBinary_totalNumberToProcess", TOTAL_NUMBER_TO_PROCESS);
+		data.dataSharer.put("MigrateBinary_recordIds", List.of("1", "2"));
 	}
 
 	@Test
-	public void testCallRunIndexBatchJob() {
+	public void testCallRunBatchJob() {
 		extFunc.useExtendedFunctionality(data);
 
-		batchHandler.MCR.assertMethodWasCalled("runIndexBatchJob");
+		batchHandler.MCR.assertMethodWasCalled("runBatchJob");
 		BatchJob batchJob = (BatchJob) batchHandler.MCR
-				.getParameterForMethodAndCallNumberAndParameter("runIndexBatchJob", 0,
-						"indexBatchJob");
+				.getParameterForMethodAndCallNumberAndParameter("runBatchJob", 0, "batchJob");
 
 		assertBatchJob(batchJob);
 	}
 
 	private void assertBatchJob(BatchJob batchJob) {
 		assertEquals(batchJob.recordId, "someRecordId");
-		assertEquals(batchJob.recordTypeToIndex, "someRecordType");
-		assertEquals(batchJob.filter, filter);
-		assertEquals(batchJob.totalNumberToIndex, TOTAL_NUMBER_TO_INDEX);
+		assertEquals(batchJob.totalNumberToProcess, TOTAL_NUMBER_TO_PROCESS);
 	}
 
 	@Test

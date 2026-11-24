@@ -44,32 +44,20 @@ public class MigrateExtendedFunctionality implements ExtendedFunctionality {
 
 	private BatchJob fecthAndCreateBatchJob(ExtendedFunctionalityData data) {
 		DataRecordGroup dataRecordGroup = data.dataRecordGroup;
-		String recordTypeForBatch = getRecordTypeToIndex(dataRecordGroup);
-		long totalNumberOfMatches = getTotalNumberOfMatches(data);
-		Filter filter = getFilter(data);
+		long totalNumberToProcess = getTotalNumberToProcess(data);
 
-		return createBatchJob(recordTypeForBatch, totalNumberOfMatches, filter,
-				dataRecordGroup.getId());
+		return createBatchJob(null, totalNumberToProcess, null, dataRecordGroup.getId());
 	}
 
 	private BatchJob createBatchJob(String recordTypeForBatch, long totalNumberOfMatches,
 			Filter filter, String id) {
-		BatchJob batchJob = new BatchJob(recordTypeForBatch, totalNumberOfMatches,
-				filter);
+		BatchJob batchJob = new BatchJob(recordTypeForBatch, totalNumberOfMatches, filter);
 		batchJob.recordId = id;
 		return batchJob;
 	}
 
-	private Filter getFilter(ExtendedFunctionalityData data) {
-		return (Filter) data.dataSharer.get("IndexBatchJob_filter");
-	}
-
-	private long getTotalNumberOfMatches(ExtendedFunctionalityData data) {
-		return (long) data.dataSharer.get("IndexBatchJob_totalNumberOfMatches");
-	}
-
-	private String getRecordTypeToIndex(DataRecordGroup dataRecordGroup) {
-		return dataRecordGroup.getFirstAtomicValueWithNameInData("recordTypeToIndex");
+	private long getTotalNumberToProcess(ExtendedFunctionalityData data) {
+		return (long) data.dataSharer.get("MigrateBinary_totalNumberToProcess");
 	}
 
 	public SpiderDependencyProvider onlyForTestGetDependencyProvider() {

@@ -165,7 +165,7 @@ public class DataRecordGroupHandlerForIndexBatchJobImp
 
 	private void addTotalNumberToIndex(BatchJob indexBatchJob,
 			DataRecordGroup dataRecordGroup) {
-		long totalNumberToIndex = indexBatchJob.totalNumberToIndex;
+		long totalNumberToIndex = indexBatchJob.totalNumberToProcess;
 		addAtomicValueToDataGroup("totalNumberToIndex", String.valueOf(totalNumberToIndex),
 				dataRecordGroup);
 	}
