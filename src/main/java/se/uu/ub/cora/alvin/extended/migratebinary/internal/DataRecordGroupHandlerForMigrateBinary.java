@@ -24,34 +24,32 @@ import se.uu.ub.cora.data.DataRecordGroup;
 
 /**
  * DataRecordGroupHandlerForMigrateBinary is responsible for
- * 
- * 
  */
-
 public interface DataRecordGroupHandlerForMigrateBinary {
 
 	/**
 	 * updateDataGroup
 	 * 
-	 * @param migrateBinary
+	 * @param migrateBinaryInfo
 	 *            An MigrateBinary containing information about what to index, including RecordType,
 	 *            the number of records to index, and Filter
 	 * 
 	 * @param dataRecordGroup
 	 *            Is the updated DataRecordGroup containing the changes from migrateBinary
 	 */
-	void updateDataRecordGroup(MigrateBinary migrateBinary, DataRecordGroup dataGroup);
+	void updateDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo, DataRecordGroup dataGroup);
 
 	/**
 	 * createDataGroup
 	 * 
-	 * @param migrateBinary
+	 * @param migrateBinaryInfo
 	 *            An MigrateBinary containing information about what to index, including RecordType,
 	 *            the number of records to index, and Filter
 	 * @param filterAsDataGroup
 	 *            A DataGroup, filter, as set by the user
-	 * @return A {@link DataRecordGroup} with the created indexBathJob
+	 * @return A {@link DataRecordGroup} with the created migrateBinary
 	 */
-	DataRecordGroup createDataRecordGroup(MigrateBinary migrateBinary, DataGroup filterAsDataGroup);
+	DataRecordGroup createDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo,
+			DataGroup filterAsDataGroup);
 
 }

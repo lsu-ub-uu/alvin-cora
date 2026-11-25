@@ -36,15 +36,15 @@ public class DataRecordGroupHandlerForMigrateBinarySpy
 	}
 
 	@Override
-	public void updateDataRecordGroup(MigrateBinary migrateBinary,
+	public void updateDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo,
 			DataRecordGroup dataRecordGroup) {
-		MCR.addCall("migrateBinary", migrateBinary, "dataRecordGroup", dataRecordGroup);
+		MCR.addCall("migrateBinaryInfo", migrateBinaryInfo, "dataRecordGroup", dataRecordGroup);
 	}
 
 	@Override
-	public DataRecordGroup createDataRecordGroup(MigrateBinary migrateBinary,
+	public DataRecordGroup createDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo,
 			DataGroup filterAsDataGroup) {
-		return (DataRecordGroup) MCR.addCallAndReturnFromMRV("migrateBinary", migrateBinary,
+		return (DataRecordGroup) MCR.addCallAndReturnFromMRV("migrateBinary", migrateBinaryInfo,
 				"filterAsDataGroup", filterAsDataGroup);
 	}
 }
