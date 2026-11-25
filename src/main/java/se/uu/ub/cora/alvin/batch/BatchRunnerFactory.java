@@ -18,10 +18,10 @@
  */
 package se.uu.ub.cora.alvin.batch;
 
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchJob;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryInfo;
 
 public interface BatchRunnerFactory {
 
-	BatchRunner factor(BatchJob indexBatchJob);
+	BatchRunner factor(MigrateBinaryInfo migrateBinary);
 
 }

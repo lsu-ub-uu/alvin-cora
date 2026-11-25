@@ -23,22 +23,22 @@ import java.util.List;
 
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 
-public class IndexBatchJobStorerSpy implements BatchJobStorer {
+public class MigrateBinaryStorerSpy implements MigrateBinaryStorer {
 
-	public BatchJob indexBatchJob;
+	public MigrateBinaryInfo migrateBinaryInfo;
 	public long numberOfIndexed;
 	public List<Error> errors = new ArrayList<>();
 	public MethodCallRecorder MCR = new MethodCallRecorder();
 
 	@Override
-	public void store(BatchJob indexBatchJob) {
+	public void store(MigrateBinaryInfo migrateBinaryInfo) {
 		// special to record the number of processed and errors, by each call
-		MCR.addCall("indexBatchJob", indexBatchJob, "indexBatchJob.numberOfProcessedRecords",
-				indexBatchJob.numberOfProcessedRecords, "indexBatchJob.errors",
-				new ArrayList<>(indexBatchJob.errors), "indexBatchJob.status",
-				indexBatchJob.status);
-		this.indexBatchJob = indexBatchJob;
-		numberOfIndexed = indexBatchJob.numberOfProcessedRecords;
-		errors.addAll(indexBatchJob.errors);
+		MCR.addCall("migrateBinary", migrateBinaryInfo, "migrateBinary.numberOfProcessedRecords",
+				migrateBinaryInfo.numberOfProcessedRecords, "migrateBinary.errors",
+				new ArrayList<>(migrateBinaryInfo.errors), "migrateBinary.status",
+				migrateBinaryInfo.status);
+		this.migrateBinaryInfo = migrateBinaryInfo;
+		numberOfIndexed = migrateBinaryInfo.numberOfProcessedRecords;
+		errors.addAll(migrateBinaryInfo.errors);
 	}
 }

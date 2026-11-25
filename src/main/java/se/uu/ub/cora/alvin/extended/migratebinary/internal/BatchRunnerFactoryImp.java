@@ -31,10 +31,10 @@ public class BatchRunnerFactoryImp implements BatchRunnerFactory {
 	}
 
 	@Override
-	public BatchRunner factor(BatchJob batchJob) {
-		IndexBatchJobStorer batchJobStorer = new IndexBatchJobStorer(dependencyProvider,
-				new DataRecordGroupHandlerForIndexBatchJobImp());
-		return new BatchJobRunner(dependencyProvider, batchJobStorer, batchJob);
+	public BatchRunner factor(MigrateBinaryInfo migrateInfo) {
+		MigrateBinaryStorerImp migrateInfoStorer = new MigrateBinaryStorerImp(dependencyProvider,
+				new DataRecordGroupHandlerForMigrateBinaryImp());
+		return new MigrateBinaryRunner(dependencyProvider, migrateInfoStorer, migrateInfo);
 	}
 
 	public SpiderDependencyProvider getDependencyProvider() {

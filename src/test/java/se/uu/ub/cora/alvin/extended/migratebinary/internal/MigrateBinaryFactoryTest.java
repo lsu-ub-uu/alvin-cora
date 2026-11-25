@@ -22,15 +22,16 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.List;
+
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.alvin.batch.BatchRunnerFactory;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
-import se.uu.ub.cora.storage.Filter;
 
-public class BatchRunnerFactoryTest {
+public class MigrateBinaryFactoryTest {
 	private DataFactorySpy dataFactorySpy;
 	private SpiderDependencyProviderSpy dependencyProvider;
 
@@ -40,22 +41,22 @@ public class BatchRunnerFactoryTest {
 		DataProvider.onlyForTestSetDataFactory(dataFactorySpy);
 		dependencyProvider = new SpiderDependencyProviderSpy();
 		BatchRunnerFactory factory = new BatchRunnerFactoryImp(dependencyProvider);
-		BatchJob indexBatchJob = new BatchJob("someRecordType", 10, new Filter());
+		MigrateBinaryInfo migrateBinary = new MigrateBinaryInfo("someRecordType", List.of("23", "45"));
 
-		BatchJobRunner runner = (BatchJobRunner) factory.factor(indexBatchJob);
+		MigrateBinaryRunner runner = (MigrateBinaryRunner) factory.factor(migrateBinary);
 
-		assertSame(runner.getIndexBatchJob(), indexBatchJob);
+		assertSame(runner.getMigrateBinary(), migrateBinary);
 		assertSame(runner.getDependencyProvider(), dependencyProvider);
 
-		assertCorrectIndexBatchJobStorer(runner);
+		assertCorrectMigrateBinaryStorer(runner);
 	}
 
-	private void assertCorrectIndexBatchJobStorer(BatchJobRunner runner) {
-		IndexBatchJobStorer batchJobStorer = (IndexBatchJobStorer) runner.getBatchJobStorer();
-		assertTrue(batchJobStorer instanceof IndexBatchJobStorer);
-		assertTrue(batchJobStorer
-				.getDataGroupHandlerForIndexBatchJob() instanceof DataRecordGroupHandlerForIndexBatchJobImp);
-		assertEquals(batchJobStorer.getDependencyProvider(), dependencyProvider);
+	private void assertCorrectMigrateBinaryStorer(MigrateBinaryRunner runner) {
+		MigrateBinaryStorerImp migrateInfoStorer = (MigrateBinaryStorerImp) runner.getMigrateBinaryStorer();
+		assertTrue(migrateInfoStorer instanceof MigrateBinaryStorerImp);
+		assertTrue(migrateInfoStorer
+				.getDataGroupHandlerForMigrateBinary() instanceof DataRecordGroupHandlerForMigrateBinaryImp);
+		assertEquals(migrateInfoStorer.getDependencyProvider(), dependencyProvider);
 	}
 
 }

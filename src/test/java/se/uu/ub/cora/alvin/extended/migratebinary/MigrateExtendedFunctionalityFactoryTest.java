@@ -59,13 +59,13 @@ public class MigrateExtendedFunctionalityFactoryTest {
 	@Test
 	public void testGetExtendedFunctionalityContextsForCreate() {
 		ExtendedFunctionalityContext extFunc = assertContextExistsAndReturnIt(CREATE_BEFORE_STORE);
-		assertEquals(extFunc.recordType, "indexBatchJob");
+		assertEquals(extFunc.recordType, "migrateBinary");
 		assertEquals(extFunc.position, CREATE_BEFORE_STORE);
 		assertEquals(extFunc.runAsNumber, 0);
 
 		ExtendedFunctionalityContext extFunc2 = assertContextExistsAndReturnIt(
 				CREATE_BEFORE_ENHANCE);
-		assertEquals(extFunc2.recordType, "indexBatchJob");
+		assertEquals(extFunc2.recordType, "migrateBinary");
 		assertEquals(extFunc2.position, CREATE_BEFORE_ENHANCE);
 		assertEquals(extFunc2.runAsNumber, 0);
 	}
@@ -73,14 +73,14 @@ public class MigrateExtendedFunctionalityFactoryTest {
 	@Test
 	public void testFactorCreateCalculateNumberToIndex() {
 		List<ExtendedFunctionality> functionalities = factory.factor(CREATE_BEFORE_STORE,
-				"indexBatchJob");
+				"migrateBinary");
 		assertTrue(functionalities.get(0) instanceof CompleteMigrateBinaryExtendedFunctionality);
 	}
 
 	@Test
 	public void testFactorDependenciesCalculateNumberToIndex() {
 		List<ExtendedFunctionality> functionalities = factory.factor(CREATE_BEFORE_STORE,
-				"indexBatchJob");
+				"migrateBinary");
 		CompleteMigrateBinaryExtendedFunctionality extFunctionality = (CompleteMigrateBinaryExtendedFunctionality) functionalities
 				.get(0);
 
@@ -92,14 +92,14 @@ public class MigrateExtendedFunctionalityFactoryTest {
 	@Test
 	public void testFactorCreateRunner() {
 		List<ExtendedFunctionality> functionalities = factory.factor(CREATE_BEFORE_ENHANCE,
-				"indexBatchJob");
+				"migrateBinary");
 		assertTrue(functionalities.get(0) instanceof MigrateExtendedFunctionality);
 	}
 
 	@Test
 	public void testFactorDependenciesRunner() {
 		List<ExtendedFunctionality> functionalities = factory.factor(CREATE_BEFORE_ENHANCE,
-				"indexBatchJob");
+				"migrateBinary");
 		MigrateExtendedFunctionality extFunctionality = (MigrateExtendedFunctionality) functionalities
 				.get(0);
 		MigrateBatchHandlerImp indexBatchHandler = (MigrateBatchHandlerImp) extFunctionality

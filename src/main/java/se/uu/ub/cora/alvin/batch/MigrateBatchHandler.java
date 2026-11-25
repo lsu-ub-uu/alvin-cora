@@ -18,29 +18,29 @@
  */
 package se.uu.ub.cora.alvin.batch;
 
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchJob;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryInfo;
 
 /**
- * IndexBatchHandler is responsible for starting index batch job in a single thread. <br>
+ * MigrateBatchHandler is responsible for starting batch job in a single thread. <br>
  * 
- * IndexBatchHandler is also responsible for running index batch jobs in batches, reading an
- * appropriate number of records from storage, extracting search terms, and sending the records and
- * the extracted search terms for indexing. <br>
+ * MigrateBatchHandler is also responsible for running batch jobs in batches, reading an appropriate
+ * number of records from storage, extracting search terms, and sending the records and the
+ * extracted search terms for indexing. <br>
  * 
  */
 public interface MigrateBatchHandler {
 
 	/**
-	 * runIndexBatchJob takes an IndexBatchJob with information about the recordType, and filter of
-	 * records to index. Calls to runIndexBatchJob MUST return control directly and do the main work
-	 * of indexing in a different thread from the one calling this method.
+	 * runMigrateBinary takes an MigrateInfo with information about the recordType, and filter of records
+	 * to index. Calls to runMigrateInfo MUST return control directly and do the main work of
+	 * indexing in a different thread from the one calling this method.
 	 * <p>
-	 * Note, a record must exist in RecordStorage with the recordId as set in indexBatchJob (and
-	 * recordType indexBatchJob), before a call to this method can be made.
+	 * Note, a record must exist in RecordStorage with the recordId as set in migrateBinary (and
+	 * recordType migrateBinary), before a call to this method can be made.
 	 * 
-	 * @param indexBatchJob
-	 *            An IndexBatchJob containing information about what to index, including RecordId,
+	 * @param migrateInfo
+	 *            An MigrateInfo containing information about what to index, including RecordId,
 	 *            RecordTypeToIndex, the number of records to index, and Filter
 	 */
-	void runBatchJob(BatchJob indexBatchJob);
+	void runMigrateBinary(MigrateBinaryInfo migrateInfo);
 }

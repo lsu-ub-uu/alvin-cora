@@ -27,28 +27,23 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.alvin.batch.MigrateBatchHandler;
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchJob;
 import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBatchHandlerSpy;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryInfo;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityData;
-import se.uu.ub.cora.storage.Filter;
-import se.uu.ub.cora.storage.spies.RecordStorageSpy;
 
 public class MigrateExtendedFunctionalityTest {
 
-	private static final long TOTAL_NUMBER_TO_PROCESS = 32L;
 	private MigrateExtendedFunctionality extFunc;
 	private DataRecordGroupSpy dataRecordGroup;
 	private ExtendedFunctionalityData data;
 	private MigrateBatchHandlerSpy batchHandler;
 	private SpiderDependencyProviderSpy dependencyProvider;
 	private DataFactorySpy dataFactory;
-	private RecordStorageSpy recordStorage;
-	private Filter filter;
 
 	@BeforeMethod
 	private void beforeMethod() {
@@ -66,9 +61,6 @@ public class MigrateExtendedFunctionalityTest {
 
 	public void setupDependencyProvider() {
 		dependencyProvider = new SpiderDependencyProviderSpy();
-
-		recordStorage = new RecordStorageSpy();
-
 	}
 
 	private void setData() {
@@ -78,24 +70,23 @@ public class MigrateExtendedFunctionalityTest {
 
 		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getId", () -> "someRecordId");
 
-		data.dataSharer.put("MigrateBinary_totalNumberToProcess", TOTAL_NUMBER_TO_PROCESS);
 		data.dataSharer.put("MigrateBinary_recordIds", List.of("1", "2"));
 	}
 
 	@Test
-	public void testCallRunBatchJob() {
+	public void testCallRunMigrateBinary() {
 		extFunc.useExtendedFunctionality(data);
 
-		batchHandler.MCR.assertMethodWasCalled("runBatchJob");
-		BatchJob batchJob = (BatchJob) batchHandler.MCR
-				.getParameterForMethodAndCallNumberAndParameter("runBatchJob", 0, "batchJob");
+		batchHandler.MCR.assertMethodWasCalled("runMigrateBinary");
+		MigrateBinaryInfo migrateInfo = (MigrateBinaryInfo) batchHandler.MCR
+				.getParameterForMethodAndCallNumberAndParameter("runMigrateBinary", 0, "migrateInfo");
 
-		assertBatchJob(batchJob);
+		assertMigrateBinary(migrateInfo);
 	}
 
-	private void assertBatchJob(BatchJob batchJob) {
-		assertEquals(batchJob.recordId, "someRecordId");
-		assertEquals(batchJob.totalNumberToProcess, TOTAL_NUMBER_TO_PROCESS);
+	private void assertMigrateBinary(MigrateBinaryInfo migrateInfo) {
+		assertEquals(migrateInfo.batchRecordId, "someRecordId");
+		assertEquals(migrateInfo.totalNumberToProcess, 2);
 	}
 
 	@Test

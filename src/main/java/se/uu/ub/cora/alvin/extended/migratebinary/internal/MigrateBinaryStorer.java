@@ -18,25 +18,23 @@
  */
 package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 
-import java.util.ArrayList;
-import java.util.List;
+/**
+ * MigrateBinaryStorer is responsible for storing MigrateBinarys.
+ */
+public interface MigrateBinaryStorer {
 
-import se.uu.ub.cora.storage.Filter;
+	/**
+	 * store updates an existing migrateBinary record in storage using the supplied MigrateBinary.
+	 * <p>
+	 * This is done by first reading the migrateBinary record from storage updating the record using
+	 * information from the supplied migrateBinary and then sending the updated record back to
+	 * storage.
+	 * <p>
+	 * The information that is updated is, numberOfProcessedRecords, errors and status
+	 * 
+	 * @param migrateBinaryInfo
+	 *            An {@link migrateBinaryInfo} containing updated information
+	 */
+	void store(MigrateBinaryInfo migrateBinaryInfo);
 
-public class BatchJob {
-
-	public String recordId;
-	public String recordTypeToIndex;
-	public long totalNumberToProcess = 0;
-	public long numberOfProcessedRecords = 0;
-	public String status = "started";
-	public List<Error> errors = new ArrayList<>();
-	public Filter filter;
-
-	public BatchJob(String recordTypeToIndex, long totalNumberToIndex, Filter filter) {
-
-		this.recordTypeToIndex = recordTypeToIndex;
-		this.totalNumberToProcess = totalNumberToIndex;
-		this.filter = filter;
-	}
 }

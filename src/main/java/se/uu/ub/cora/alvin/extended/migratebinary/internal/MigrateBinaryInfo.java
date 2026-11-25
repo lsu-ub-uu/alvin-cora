@@ -18,23 +18,23 @@
  */
 package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 
-/**
- * BatchJobStorer is responsible for storing IndexBatchJobs.
- */
-public interface BatchJobStorer {
+import java.util.ArrayList;
+import java.util.List;
 
-	/**
-	 * store updates an existing indexBatchJob record in storage using the supplied IndexBatchJob.
-	 * <p>
-	 * This is done by first reading the indexBatchJob record from storage updating the record using
-	 * information from the supplied indexBatchJob and then sending the updated record back to
-	 * storage.
-	 * <p>
-	 * The information that is updated is, numberOfProcessedRecords, errors and status
-	 * 
-	 * @param indexBatchJob
-	 *            An {@link BatchJob} containing updated information
-	 */
-	void store(BatchJob indexBatchJob);
+public class MigrateBinaryInfo {
 
+	public String batchRecordId;
+	public List<String> recordIds;
+	public long totalNumberToProcess = 0;
+	public long numberOfProcessedRecords = 0;
+	public int numberOfMigratedBinaries = 0;
+	public long amountOfMigratedData = 0;
+	public String status = "started";
+	public List<Error> errors = new ArrayList<>();
+
+	public MigrateBinaryInfo(String batchRecordId, List<String> recordIds) {
+		this.batchRecordId = batchRecordId;
+		this.recordIds = recordIds;
+		this.totalNumberToProcess = recordIds.size();
+	}
 }

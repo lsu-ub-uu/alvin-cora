@@ -53,11 +53,10 @@ public class CompleteMigrateBinaryExtendedFunctionality implements ExtendedFunct
 	private void handleTotalRecords(ExtendedFunctionalityData data,
 			DataRecordGroup dataRecordGroup) {
 		List<DataAtomic> alvinRecords = dataRecordGroup.getAllDataAtomicsWithNameInData("recordId");
-		long totalNumberOfMatches = alvinRecords.size();
+		long totalNumberToProcess = alvinRecords.size();
 		DataAtomic totalAtomic = createAtomic("totalNumberToProcess",
-				String.valueOf(totalNumberOfMatches));
+				String.valueOf(totalNumberToProcess));
 		dataRecordGroup.addChild(totalAtomic);
-		data.dataSharer.put("MigrateBinary_totalNumberToProcess", totalNumberOfMatches);
 
 		List<String> recordIds = alvinRecords.stream().map(DataAtomic::getValue).toList();
 		data.dataSharer.put("MigrateBinary_recordIds", recordIds);

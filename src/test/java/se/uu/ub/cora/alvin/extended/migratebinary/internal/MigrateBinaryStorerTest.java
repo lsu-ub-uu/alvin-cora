@@ -34,18 +34,17 @@ import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.collected.CollectTerms;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
-import se.uu.ub.cora.storage.Filter;
 import se.uu.ub.cora.storage.spies.RecordStorageSpy;
 
-public class IndexBatchJobStorerTest {
+public class MigrateBinaryStorerTest {
 	private SpiderDependencyProviderSpy dependencyProvider;
 	private RecordStorageSpy recordStorage;
-	private BatchJob indexBatchJob;
+	private MigrateBinaryInfo migrateBinary;
 	private DataGroupTermCollectorSpy termCollector;
 	private DataRecordLinkCollectorSpy linkCollector;
-	private DataRecordGroupHandlerForIndexBatchJobSpy dataRecordGroupHandlerForIndexBatchJobSpy;
+	private DataRecordGroupHandlerForMigrateBinarySpy dataRecordGroupHandlerForMigrateBinarySpy;
 	private DataFactorySpy dataFactory;
-	private BatchJobStorer storer;
+	private MigrateBinaryStorer storer;
 
 	@BeforeMethod
 	public void setUp() {
@@ -60,18 +59,18 @@ public class IndexBatchJobStorerTest {
 		dependencyProvider.termCollector = termCollector;
 		dependencyProvider.linkCollector = linkCollector;
 
-		dataRecordGroupHandlerForIndexBatchJobSpy = new DataRecordGroupHandlerForIndexBatchJobSpy();
+		dataRecordGroupHandlerForMigrateBinarySpy = new DataRecordGroupHandlerForMigrateBinarySpy();
 
-		createDefaultBatchJob();
+		createDefaultMigrateBinary();
 
-		DataRecordGroupSpy indexBatchJobDataGroup = createIndexBatchJobDataGroup();
-		recordStorage.MRV.setDefaultReturnValuesSupplier("read", () -> indexBatchJobDataGroup);
+		DataRecordGroupSpy migrateBinaryDataGroup = createMigrateBinaryDataGroup();
+		recordStorage.MRV.setDefaultReturnValuesSupplier("read", () -> migrateBinaryDataGroup);
 
-		storer = new IndexBatchJobStorer(dependencyProvider,
-				dataRecordGroupHandlerForIndexBatchJobSpy);
+		storer = new MigrateBinaryStorerImp(dependencyProvider,
+				dataRecordGroupHandlerForMigrateBinarySpy);
 	}
 
-	private DataRecordGroupSpy createIndexBatchJobDataGroup() {
+	private DataRecordGroupSpy createMigrateBinaryDataGroup() {
 		DataRecordGroupSpy dataRecordGroup = new DataRecordGroupSpy();
 		dataRecordGroup.MRV.setDefaultReturnValuesSupplier("getDataDivider",
 				() -> "someDataDivider");
@@ -80,14 +79,14 @@ public class IndexBatchJobStorerTest {
 
 	@Test
 	public void testCorrectRead() {
-		storer.store(indexBatchJob);
+		storer.store(migrateBinary);
 
-		recordStorage.MCR.assertParameters("read", 0, "indexBatchJob", indexBatchJob.recordId);
+		recordStorage.MCR.assertParameters("read", 0, "migrateBinary", migrateBinary.batchRecordId);
 	}
 
 	@Test
 	public void testCorrectCallToTermCollector() {
-		storer.store(indexBatchJob);
+		storer.store(migrateBinary);
 
 		Map<String, Object> parameters = termCollector.MCR
 				.getParametersForMethodAndCallNumber("collectTerms", 0);
@@ -104,38 +103,38 @@ public class IndexBatchJobStorerTest {
 
 	@Test
 	public void testCorrectCallToLinkCollector() {
-		storer.store(indexBatchJob);
+		storer.store(migrateBinary);
 
 		String metadataIdFromTypeHandler = (String) dependencyProvider.recordTypeHandlerSpy.MCR
 				.getReturnValue("getDefinitionId", 0);
-		var readBatchJob = recordStorage.MCR.getReturnValue("read", 0);
-		var convertedBatchJob = dataFactory.MCR
-				.assertCalledParametersReturn("factorGroupFromDataRecordGroup", readBatchJob);
+		var readMigrateBinary = recordStorage.MCR.getReturnValue("read", 0);
+		var convertedMigrateBinary = dataFactory.MCR
+				.assertCalledParametersReturn("factorGroupFromDataRecordGroup", readMigrateBinary);
 		linkCollector.MCR.assertParameters("collectLinks", 0, metadataIdFromTypeHandler,
-				convertedBatchJob);
+				convertedMigrateBinary);
 	}
 
 	@Test
 	public void testCorrectCallToConverter() {
-		storer.store(indexBatchJob);
+		storer.store(migrateBinary);
 
-		var readBatchJob = recordStorage.MCR.getReturnValue("read", 0);
-		dataRecordGroupHandlerForIndexBatchJobSpy.MCR.assertParameters("updateDataRecordGroup", 0,
-				indexBatchJob, readBatchJob);
+		var readMigrateBinary = recordStorage.MCR.getReturnValue("read", 0);
+		dataRecordGroupHandlerForMigrateBinarySpy.MCR.assertParameters("updateDataRecordGroup", 0,
+				migrateBinary, readMigrateBinary);
 	}
 
 	@Test
 	public void testStore() {
-		storer.store(indexBatchJob);
+		storer.store(migrateBinary);
 
 		Map<String, Object> parameters = recordStorage.MCR
 				.getParametersForMethodAndCallNumber("update", 0);
 		DataRecordGroupSpy returnedDataGroupFromRead = (DataRecordGroupSpy) recordStorage.MCR
 				.getReturnValue("read", 0);
-		var convertedBatchJob = dataFactory.MCR.assertCalledParametersReturn(
+		var convertedMigrateBinary = dataFactory.MCR.assertCalledParametersReturn(
 				"factorGroupFromDataRecordGroup", returnedDataGroupFromRead);
-		assertSame(parameters.get("dataRecord"), convertedBatchJob);
-		assertEquals(parameters.get("type"), "indexBatchJob");
+		assertSame(parameters.get("dataRecord"), convertedMigrateBinary);
+		assertEquals(parameters.get("type"), "migrateBinary");
 		assertEquals(parameters.get("id"), "someRecordId");
 		linkCollector.MCR.assertReturn("collectLinks", 0, parameters.get("links"));
 		CollectTerms collectTerms = (CollectTerms) termCollector.MCR.getReturnValue("collectTerms",
@@ -144,10 +143,10 @@ public class IndexBatchJobStorerTest {
 		assertEquals(parameters.get("dataDivider"), "someDataDivider");
 	}
 
-	private void createDefaultBatchJob() {
-		indexBatchJob = new BatchJob("someRecordType", 45, new Filter());
-		indexBatchJob.numberOfProcessedRecords = 80;
-		indexBatchJob.recordId = "someRecordId";
+	private void createDefaultMigrateBinary() {
+		migrateBinary = new MigrateBinaryInfo("someRecordType");
+		migrateBinary.numberOfProcessedRecords = 80;
+		migrateBinary.batchRecordId = "someRecordId";
 		createAndAddErrors();
 	}
 
@@ -155,6 +154,6 @@ public class IndexBatchJobStorerTest {
 		List<Error> errors = new ArrayList<>();
 		errors.add(new Error("someId3", "Error while indexing"));
 		errors.add(new Error("someId89", "IOException while indexing"));
-		indexBatchJob.errors.addAll(errors);
+		migrateBinary.errors.addAll(errors);
 	}
 }

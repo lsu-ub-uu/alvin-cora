@@ -37,7 +37,7 @@ import se.uu.ub.cora.data.spies.DataGroupSpy;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
 import se.uu.ub.cora.storage.Filter;
 
-public class DataRecordGroupHandlerForIndexBatchJobTest {
+public class DataRecordGroupHandlerForMigrateBinaryTest {
 
 	private static final String SOME_RECORD_TYPE = "someRecordType";
 
@@ -45,8 +45,8 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 	private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter
 			.ofPattern(DATE_TIME_PATTERN);
 
-	private BatchJob indexBatchJob;
-	private DataRecordGroupHandlerForIndexBatchJobImp dataGroupHandler;
+	private MigrateBinaryInfo migrateBinary;
+	private DataRecordGroupHandlerForMigrateBinaryImp dataGroupHandler;
 	private DataFactorySpy dataFactorySpy;
 	/**
 	 * numberOfFactoredAtomics
@@ -68,8 +68,8 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 		nfg = 0;
 		setUpProviders();
 
-		indexBatchJob = createIndexBatchJob();
-		dataGroupHandler = new DataRecordGroupHandlerForIndexBatchJobImp();
+		migrateBinary = createMigrateBinary();
+		dataGroupHandler = new DataRecordGroupHandlerForMigrateBinaryImp();
 	}
 
 	private void setUpProviders() {
@@ -78,7 +78,7 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 	}
 
 	String dataGroupLayout = """
-			indexBatchJob
+			migrateBinary
 				recordInfo
 					createdBy user someSuperUser
 					tsCreated 2021-05-03T14:12:11.657482Z
@@ -93,23 +93,23 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 					message some read error message
 				""";
 
-	Integer callsToAddChildForCheckingIndexBatchJob = 0;
-	Integer callsToRemoveFirstChildWithNameForIndexBatchJob = 0;
+	Integer callsToAddChildForCheckingMigrateBinary = 0;
+	Integer callsToRemoveFirstChildWithNameForMigrateBinary = 0;
 
 	@Test
-	public void testUpdateDataGroupWithInfoFromIndexBatchJobForUpdate() {
-		callsToAddChildForCheckingIndexBatchJob = 0;
-		callsToRemoveFirstChildWithNameForIndexBatchJob = 0;
-		DataRecordGroupSpy existingIndexBatchJob = new DataRecordGroupSpy();
+	public void testUpdateDataGroupWithInfoFromMigrateBinaryForUpdate() {
+		callsToAddChildForCheckingMigrateBinary = 0;
+		callsToRemoveFirstChildWithNameForMigrateBinary = 0;
+		DataRecordGroupSpy existingMigrateBinary = new DataRecordGroupSpy();
 		// setListOfErrors
 		List<DataGroupSpy> listOfErrorsSpies = List.of(new DataGroupSpy(), new DataGroupSpy());
 		int firstErrorRepeatId = listOfErrorsSpies.size() + 1;
-		existingIndexBatchJob.MRV.setReturnValues("getAllGroupsWithNameInData",
+		existingMigrateBinary.MRV.setReturnValues("getAllGroupsWithNameInData",
 				List.of(listOfErrorsSpies), "error");
 
 		// recordInfoSpy
 		DataGroupSpy recordInfoG = new DataGroupSpy();
-		existingIndexBatchJob.MRV.setReturnValues("getFirstGroupWithNameInData",
+		existingMigrateBinary.MRV.setReturnValues("getFirstGroupWithNameInData",
 				List.of(recordInfoG), "recordInfo");
 		// setListOfUpdated
 		List<DataGroupSpy> listOfUpdatedSpies = List.of(new DataGroupSpy());
@@ -119,22 +119,22 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 
 		LocalDateTime dateTimeBefore = whatTimeIsIt().minus(2, ChronoUnit.SECONDS);
 
-		dataGroupHandler.updateDataRecordGroup(indexBatchJob, existingIndexBatchJob);
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
 
 		LocalDateTime dateTimeAfter = whatTimeIsIt().plus(2, ChronoUnit.SECONDS);
 
-		assertNumberOfProcessedRecords(existingIndexBatchJob);
-		assertErrorsFromBatchJobAddedToGroupAndFirstRepeatId(existingIndexBatchJob,
+		assertNumberOfProcessedRecords(existingMigrateBinary);
+		assertErrorsFromMigrateBinaryAddedToGroupAndFirstRepeatId(existingMigrateBinary,
 				firstErrorRepeatId);
-		assertStatus(existingIndexBatchJob);
-		assertNewUpdatedAddedToRecordInfo(existingIndexBatchJob, firstUpdatedRepeatId,
+		assertStatus(existingMigrateBinary);
+		assertNewUpdatedAddedToRecordInfo(existingMigrateBinary, firstUpdatedRepeatId,
 				dateTimeBefore, dateTimeAfter);
 	}
 
-	private void assertNewUpdatedAddedToRecordInfo(DataRecordGroupSpy existingIndexBatchJob,
+	private void assertNewUpdatedAddedToRecordInfo(DataRecordGroupSpy existingMigrateBinary,
 			int firstUpdatedRepeatId, LocalDateTime dateTimeBefore, LocalDateTime dateTimeAfter) {
-		existingIndexBatchJob.MCR.assertParameters("getFirstGroupWithNameInData", 0, "recordInfo");
-		DataGroupSpy recordInfo = (DataGroupSpy) existingIndexBatchJob.MCR
+		existingMigrateBinary.MCR.assertParameters("getFirstGroupWithNameInData", 0, "recordInfo");
+		DataGroupSpy recordInfo = (DataGroupSpy) existingMigrateBinary.MCR
 				.getReturnValue("getFirstGroupWithNameInData", 0);
 
 		recordInfo.MCR.assertParameters("getAllGroupsWithNameInData", 0, "updated");
@@ -144,7 +144,7 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 				.getReturnValue("factorGroupUsingNameInData", nfg);
 		recordInfo.MCR.assertParameters("addChild", 0, updated);
 		updated.MCR.assertParameters("setRepeatId", 0, String.valueOf(firstUpdatedRepeatId));
-		callsToAddChildForCheckingIndexBatchJob++;
+		callsToAddChildForCheckingMigrateBinary++;
 		nfg++;
 
 		assertUpdateBy(updated);
@@ -182,99 +182,99 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 		return LocalDateTime.now();
 	}
 
-	private void assertNumberOfProcessedRecords(DataRecordGroupSpy existingIndexBatchJob) {
-		existingIndexBatchJob.MCR.assertParameters("removeFirstChildWithNameInData",
-				callsToRemoveFirstChildWithNameForIndexBatchJob, "numberOfProcessedRecords");
-		callsToRemoveFirstChildWithNameForIndexBatchJob++;
+	private void assertNumberOfProcessedRecords(DataRecordGroupSpy existingMigrateBinary) {
+		existingMigrateBinary.MCR.assertParameters("removeFirstChildWithNameInData",
+				callsToRemoveFirstChildWithNameForMigrateBinary, "numberOfProcessedRecords");
+		callsToRemoveFirstChildWithNameForMigrateBinary++;
 
 		assertFactoredAtomicWithNameAndValueAddedToAsNo("numberOfProcessedRecords",
-				String.valueOf(indexBatchJob.numberOfProcessedRecords), existingIndexBatchJob,
-				callsToAddChildForCheckingIndexBatchJob);
-		callsToAddChildForCheckingIndexBatchJob++;
+				String.valueOf(migrateBinary.numberOfProcessedRecords), existingMigrateBinary,
+				callsToAddChildForCheckingMigrateBinary);
+		callsToAddChildForCheckingMigrateBinary++;
 	}
 
-	private void assertStatus(DataRecordGroupSpy existingIndexBatchJob) {
-		existingIndexBatchJob.MCR.assertParameters("removeFirstChildWithNameInData",
-				callsToRemoveFirstChildWithNameForIndexBatchJob, "status");
-		callsToRemoveFirstChildWithNameForIndexBatchJob++;
+	private void assertStatus(DataRecordGroupSpy existingMigrateBinary) {
+		existingMigrateBinary.MCR.assertParameters("removeFirstChildWithNameInData",
+				callsToRemoveFirstChildWithNameForMigrateBinary, "status");
+		callsToRemoveFirstChildWithNameForMigrateBinary++;
 
 		assertFactoredAtomicWithNameAndValueAddedToAsNo("status",
-				String.valueOf(indexBatchJob.status), existingIndexBatchJob,
-				callsToAddChildForCheckingIndexBatchJob);
-		callsToAddChildForCheckingIndexBatchJob++;
+				String.valueOf(migrateBinary.status), existingMigrateBinary,
+				callsToAddChildForCheckingMigrateBinary);
+		callsToAddChildForCheckingMigrateBinary++;
 	}
 
-	private BatchJob createIndexBatchJob() {
+	private MigrateBinaryInfo createMigrateBinary() {
 		Filter filter = new Filter();
 
-		BatchJob newIndexBatchJob = new BatchJob(SOME_RECORD_TYPE, 10, filter);
-		createAndAddErrors(newIndexBatchJob);
-		return newIndexBatchJob;
+		MigrateBinaryInfo newMigrateBinary = new MigrateBinaryInfo(SOME_RECORD_TYPE);
+		createAndAddErrors(newMigrateBinary);
+		return newMigrateBinary;
 	}
 
-	private void createAndAddErrors(BatchJob indexBatchJob) {
+	private void createAndAddErrors(MigrateBinaryInfo migrateBinary) {
 		List<Error> errors = new ArrayList<>();
 		errors.add(new Error("recordIdOne", "some index error message"));
 		errors.add(new Error("recordIdTwo", "some other index error message"));
-		indexBatchJob.errors = errors;
+		migrateBinary.errors = errors;
 	}
 
 	@Test
-	public void testConvertIndexBatchJobToDataGroupForCreate() {
+	public void testConvertMigrateBinaryToDataGroupForCreate() {
 		DataGroupSpy filterAsDataGroup = new DataGroupSpy();
 
 		DataRecordGroupSpy createdRecordGroup = (DataRecordGroupSpy) dataGroupHandler
-				.createDataRecordGroup(indexBatchJob, filterAsDataGroup);
+				.createDataRecordGroup(migrateBinary, filterAsDataGroup);
 
-		dataFactorySpy.MCR.assertParameters("factorRecordGroupUsingNameInData", 0, "indexBatchJob");
+		dataFactorySpy.MCR.assertParameters("factorRecordGroupUsingNameInData", 0, "migrateBinary");
 		dataFactorySpy.MCR.assertReturn("factorRecordGroupUsingNameInData", 0, createdRecordGroup);
 
 		assertCorrectRecordInfo(createdRecordGroup);
 
 		assertFactoredAtomicWithNameAndValueAddedToAsNo("recordTypeToIndex",
-				indexBatchJob.recordTypeToIndex, createdRecordGroup,
-				callsToAddChildForCheckingIndexBatchJob);
-		callsToAddChildForCheckingIndexBatchJob++;
+				migrateBinary.recordTypeToIndex, createdRecordGroup,
+				callsToAddChildForCheckingMigrateBinary);
+		callsToAddChildForCheckingMigrateBinary++;
 		assertFactoredAtomicWithNameAndValueAddedToAsNo("status", "started", createdRecordGroup,
-				callsToAddChildForCheckingIndexBatchJob);
-		callsToAddChildForCheckingIndexBatchJob++;
+				callsToAddChildForCheckingMigrateBinary);
+		callsToAddChildForCheckingMigrateBinary++;
 		assertFactoredAtomicWithNameAndValueAddedToAsNo("numberOfProcessedRecords", "0",
-				createdRecordGroup, callsToAddChildForCheckingIndexBatchJob);
-		callsToAddChildForCheckingIndexBatchJob++;
+				createdRecordGroup, callsToAddChildForCheckingMigrateBinary);
+		callsToAddChildForCheckingMigrateBinary++;
 		assertFactoredAtomicWithNameAndValueAddedToAsNo("totalNumberToIndex", "10",
-				createdRecordGroup, callsToAddChildForCheckingIndexBatchJob);
-		callsToAddChildForCheckingIndexBatchJob++;
-		createdRecordGroup.MCR.assertParameters("addChild", callsToAddChildForCheckingIndexBatchJob,
+				createdRecordGroup, callsToAddChildForCheckingMigrateBinary);
+		callsToAddChildForCheckingMigrateBinary++;
+		createdRecordGroup.MCR.assertParameters("addChild", callsToAddChildForCheckingMigrateBinary,
 				filterAsDataGroup);
-		callsToAddChildForCheckingIndexBatchJob++;
+		callsToAddChildForCheckingMigrateBinary++;
 
-		assertErrorsFromBatchJobAddedToGroupAndFirstRepeatId(createdRecordGroup, 1);
+		assertErrorsFromMigrateBinaryAddedToGroupAndFirstRepeatId(createdRecordGroup, 1);
 		createdRecordGroup.MCR.assertNumberOfCallsToMethod("addChild",
-				callsToAddChildForCheckingIndexBatchJob);
+				callsToAddChildForCheckingMigrateBinary);
 	}
 
 	private void assertCorrectRecordInfo(DataRecordGroupSpy createdRecordGroup) {
 		createdRecordGroup.MCR.assertParameters("setDataDivider", 0, "coraData");
-		createdRecordGroup.MCR.assertParameters("setValidationType", 0, "indexBatchJob");
+		createdRecordGroup.MCR.assertParameters("setValidationType", 0, "migrateBinary");
 	}
 
 	private void assertFactoredAtomicWithNameAndValueAddedToAsNo(String name, String value,
-			DataRecordGroupSpy existingIndexBatchJob, int addedNo) {
+			DataRecordGroupSpy existingMigrateBinary, int addedNo) {
 		dataFactorySpy.MCR.assertParameters("factorAtomicUsingNameInDataAndValue", nfa, name,
 				value);
 		DataAtomicSpy factoredAtomic = (DataAtomicSpy) dataFactorySpy.MCR
 				.getReturnValue("factorAtomicUsingNameInDataAndValue", nfa);
-		existingIndexBatchJob.MCR.assertParameters("addChild", addedNo, factoredAtomic);
+		existingMigrateBinary.MCR.assertParameters("addChild", addedNo, factoredAtomic);
 		nfa++;
 	}
 
-	private void assertErrorsFromBatchJobAddedToGroupAndFirstRepeatId(
-			DataRecordGroupSpy existingIndexBatchJob, int startRepeatId) {
+	private void assertErrorsFromMigrateBinaryAddedToGroupAndFirstRepeatId(
+			DataRecordGroupSpy existingMigrateBinary, int startRepeatId) {
 		int repeatId = startRepeatId;
-		for (Error indexError : indexBatchJob.errors) {
+		for (Error indexError : migrateBinary.errors) {
 			assertFactoredGroupWithNameAndRepeatIdAddedToAsNo("error", String.valueOf(repeatId),
-					existingIndexBatchJob, callsToAddChildForCheckingIndexBatchJob);
-			callsToAddChildForCheckingIndexBatchJob++;
+					existingMigrateBinary, callsToAddChildForCheckingMigrateBinary);
+			callsToAddChildForCheckingMigrateBinary++;
 
 			DataGroupSpy errorGroup = (DataGroupSpy) dataFactorySpy.MCR
 					.getReturnValue("factorGroupUsingNameInData", nfg);
@@ -289,41 +289,41 @@ public class DataRecordGroupHandlerForIndexBatchJobTest {
 	}
 
 	private void assertFactoredAtomicWithNameAndValueAddedToGroupAsNo(String name, String value,
-			DataGroupSpy existingIndexBatchJob, int addedNo) {
+			DataGroupSpy existingMigrateBinary, int addedNo) {
 		dataFactorySpy.MCR.assertParameters("factorAtomicUsingNameInDataAndValue", nfa, name,
 				value);
 		DataAtomicSpy factoredAtomic = (DataAtomicSpy) dataFactorySpy.MCR
 				.getReturnValue("factorAtomicUsingNameInDataAndValue", nfa);
-		existingIndexBatchJob.MCR.assertParameters("addChild", addedNo, factoredAtomic);
+		existingMigrateBinary.MCR.assertParameters("addChild", addedNo, factoredAtomic);
 		nfa++;
 	}
 
 	private void assertFactoredGroupWithNameAndRepeatIdAddedToAsNo(String name, String repeatId,
-			DataRecordGroupSpy existingIndexBatchJob, int addedNo) {
+			DataRecordGroupSpy existingMigrateBinary, int addedNo) {
 		dataFactorySpy.MCR.assertParameters("factorGroupUsingNameInData", nfg, name);
 		DataGroupSpy factoredGroup = (DataGroupSpy) dataFactorySpy.MCR
 				.getReturnValue("factorGroupUsingNameInData", nfg);
 		if (!"".equals(repeatId)) {
 			factoredGroup.MCR.assertParameters("setRepeatId", 0, repeatId);
 		}
-		existingIndexBatchJob.MCR.assertParameters("addChild", addedNo, factoredGroup);
+		existingMigrateBinary.MCR.assertParameters("addChild", addedNo, factoredGroup);
 	}
 
 	@Test
-	public void testCreateDataGroupFromIndexBatchJobNoFilterIfFilterIsEmpty() {
-		DataGroupOldSpy filterAsData = new DataGroupOldSpy("filter");
+	public void testCreateDataGroupFromMigrateBinaryNoFilterIfFilterIsEmpty() {
+		DataGroupSpy filterAsData = new DataGroupSpy("filter");
 
 		DataRecordGroupSpy createdRecordGroup = (DataRecordGroupSpy) dataGroupHandler
-				.createDataRecordGroup(indexBatchJob, filterAsData);
+				.createDataRecordGroup(migrateBinary, filterAsData);
 		createdRecordGroup.MCR.assertNumberOfCallsToMethod("addChild", 6);
 	}
 
 	@Test
-	public void testCreateDataGroupFromIndexBatchJobEmptyErrors() {
-		BatchJob newIndexBatchJob = new BatchJob("place", 10, new Filter());
+	public void testCreateDataGroupFromMigrateBinaryEmptyErrors() {
+		MigrateBinaryInfo newMigrateBinary = new MigrateBinaryInfo("place");
 
 		DataRecordGroupSpy createdRecordGroup = (DataRecordGroupSpy) dataGroupHandler
-				.createDataRecordGroup(newIndexBatchJob, new DataGroupOldSpy("filter"));
+				.createDataRecordGroup(newMigrateBinary, new DataGroupSpy("filter"));
 
 		createdRecordGroup.MCR.assertNumberOfCallsToMethod("addChild", 4);
 	}

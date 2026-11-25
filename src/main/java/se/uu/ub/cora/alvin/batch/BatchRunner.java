@@ -32,9 +32,9 @@ public interface BatchRunner extends Runnable {
 	/**
 	 * run methods overrides Runnable run method. It is intended to run in a newly created Thread.
 	 * <p>
-	 * Given a IndexBatchJob with a value containing the total number of records to index. With this
+	 * Given a MigrateBinary with a value containing the total number of records to index. With this
 	 * value run method will start a loop with X number of post which will be retrived from storage,
-	 * will be indexed and will be reported as indexed on the IndexBatchJob record
+	 * will be indexed and will be reported as indexed on the MigrateBinary record
 	 */
 
 	@Override

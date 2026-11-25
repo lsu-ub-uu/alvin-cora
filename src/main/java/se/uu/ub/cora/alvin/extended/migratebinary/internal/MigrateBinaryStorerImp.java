@@ -32,32 +32,32 @@ import se.uu.ub.cora.data.collected.Link;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.storage.RecordStorage;
 
-public class IndexBatchJobStorer implements BatchJobStorer {
-	private BatchJob indexBatchJob;
+public class MigrateBinaryStorerImp implements MigrateBinaryStorer {
+	private MigrateBinaryInfo migrateBinaryInfo;
 	private SpiderDependencyProvider dependencyProvider;
 	private RecordStorage recordStorage;
-	private static final String INDEX_BATCH_JOB = "indexBatchJob";
-	private DataRecordGroupHandlerForIndexBatchJob dataGroupHandlerForIndexBatchJob;
+	private static final String INDEX_BATCH_JOB = "migrateBinary";
+	private DataRecordGroupHandlerForMigrateBinary dataGroupHandlerForMigrateBinary;
 
-	public IndexBatchJobStorer(SpiderDependencyProvider dependencyProvider,
-			DataRecordGroupHandlerForIndexBatchJob dataGroupHandlerForIndexBatchJob) {
+	public MigrateBinaryStorerImp(SpiderDependencyProvider dependencyProvider,
+			DataRecordGroupHandlerForMigrateBinary dataGroupHandlerForMigrateBinary) {
 		this.dependencyProvider = dependencyProvider;
-		this.dataGroupHandlerForIndexBatchJob = dataGroupHandlerForIndexBatchJob;
+		this.dataGroupHandlerForMigrateBinary = dataGroupHandlerForMigrateBinary;
 		recordStorage = dependencyProvider.getRecordStorage();
 	}
 
 	@Override
-	public void store(BatchJob indexBatchJob) {
-		this.indexBatchJob = indexBatchJob;
-		DataRecordGroup completedDataRecordGroup = completeStoredDataGroup(indexBatchJob);
+	public void store(MigrateBinaryInfo migrateBinaryInfo) {
+		this.migrateBinaryInfo = migrateBinaryInfo;
+		DataRecordGroup completedDataRecordGroup = completeStoredDataGroup(migrateBinaryInfo);
 
 		storeUpdatedDataGroup(completedDataRecordGroup);
 	}
 
-	private DataRecordGroup completeStoredDataGroup(BatchJob indexBatchJob) {
+	private DataRecordGroup completeStoredDataGroup(MigrateBinaryInfo migrateBinaryInfo) {
 		DataRecordGroup dataRecordGroup = recordStorage.read(INDEX_BATCH_JOB,
-				indexBatchJob.recordId);
-		dataGroupHandlerForIndexBatchJob.updateDataRecordGroup(indexBatchJob, dataRecordGroup);
+				migrateBinaryInfo.batchRecordId);
+		dataGroupHandlerForMigrateBinary.updateDataRecordGroup(migrateBinaryInfo, dataRecordGroup);
 		return dataRecordGroup;
 	}
 
@@ -69,7 +69,7 @@ public class IndexBatchJobStorer implements BatchJobStorer {
 		Set<Link> collectedLinks = collectLinks(metadataId, groupFromRecordGroup);
 		String dataDivider = completedDataRecordGroup.getDataDivider();
 
-		recordStorage.update(INDEX_BATCH_JOB, indexBatchJob.recordId, groupFromRecordGroup,
+		recordStorage.update(INDEX_BATCH_JOB, migrateBinaryInfo.batchRecordId, groupFromRecordGroup,
 				collectedTerms.storageTerms, collectedLinks, dataDivider);
 	}
 
@@ -94,7 +94,7 @@ public class IndexBatchJobStorer implements BatchJobStorer {
 		return dependencyProvider;
 	}
 
-	DataRecordGroupHandlerForIndexBatchJob getDataGroupHandlerForIndexBatchJob() {
-		return dataGroupHandlerForIndexBatchJob;
+	DataRecordGroupHandlerForMigrateBinary getDataGroupHandlerForMigrateBinary() {
+		return dataGroupHandlerForMigrateBinary;
 	}
 }

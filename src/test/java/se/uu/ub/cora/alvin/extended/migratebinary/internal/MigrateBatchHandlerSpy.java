@@ -26,8 +26,8 @@ public class MigrateBatchHandlerSpy implements MigrateBatchHandler {
 	public MethodCallRecorder MCR = new MethodCallRecorder();
 
 	@Override
-	public void runBatchJob(BatchJob batchJob) {
-		MCR.addCall("batchJob", batchJob);
+	public void runMigrateBinary(MigrateBinaryInfo migrateInfo) {
+		MCR.addCall("migrateInfo", migrateInfo);
 	}
 
 }

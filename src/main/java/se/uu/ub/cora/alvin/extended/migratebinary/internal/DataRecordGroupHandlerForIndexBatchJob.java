@@ -23,35 +23,35 @@ import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.data.DataRecordGroup;
 
 /**
- * DataRecordGroupHandlerForIndexBatchJob is responsible for
+ * DataRecordGroupHandlerForMigrateBinary is responsible for
  * 
  * 
  */
 
-public interface DataRecordGroupHandlerForIndexBatchJob {
+public interface DataRecordGroupHandlerForMigrateBinary {
 
 	/**
 	 * updateDataGroup
 	 * 
-	 * @param indexBatchJob
-	 *            An IndexBatchJob containing information about what to index, including RecordType,
+	 * @param migrateBinary
+	 *            An MigrateBinary containing information about what to index, including RecordType,
 	 *            the number of records to index, and Filter
 	 * 
 	 * @param dataRecordGroup
-	 *            Is the updated DataRecordGroup containing the changes from indexBatchJob
+	 *            Is the updated DataRecordGroup containing the changes from migrateBinary
 	 */
-	void updateDataRecordGroup(BatchJob indexBatchJob, DataRecordGroup dataGroup);
+	void updateDataRecordGroup(MigrateBinary migrateBinary, DataRecordGroup dataGroup);
 
 	/**
 	 * createDataGroup
 	 * 
-	 * @param indexBatchJob
-	 *            An IndexBatchJob containing information about what to index, including RecordType,
+	 * @param migrateBinary
+	 *            An MigrateBinary containing information about what to index, including RecordType,
 	 *            the number of records to index, and Filter
 	 * @param filterAsDataGroup
 	 *            A DataGroup, filter, as set by the user
 	 * @return A {@link DataRecordGroup} with the created indexBathJob
 	 */
-	DataRecordGroup createDataRecordGroup(BatchJob indexBatchJob, DataGroup filterAsDataGroup);
+	DataRecordGroup createDataRecordGroup(MigrateBinary migrateBinary, DataGroup filterAsDataGroup);
 
 }

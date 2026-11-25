@@ -25,26 +25,26 @@ import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
 import se.uu.ub.cora.testutils.mrv.MethodReturnValues;
 
-public class DataRecordGroupHandlerForIndexBatchJobSpy
-		implements DataRecordGroupHandlerForIndexBatchJob {
+public class DataRecordGroupHandlerForMigrateBinarySpy
+		implements DataRecordGroupHandlerForMigrateBinary {
 	public MethodCallRecorder MCR = new MethodCallRecorder();
 	public MethodReturnValues MRV = new MethodReturnValues();
 
-	public DataRecordGroupHandlerForIndexBatchJobSpy() {
+	public DataRecordGroupHandlerForMigrateBinarySpy() {
 		MCR.useMRV(MRV);
 		MRV.setDefaultReturnValuesSupplier("createDataRecordGroup", DataRecordGroupSpy::new);
 	}
 
 	@Override
-	public void updateDataRecordGroup(BatchJob indexBatchJob,
+	public void updateDataRecordGroup(MigrateBinary migrateBinary,
 			DataRecordGroup dataRecordGroup) {
-		MCR.addCall("indexBatchJob", indexBatchJob, "dataRecordGroup", dataRecordGroup);
+		MCR.addCall("migrateBinary", migrateBinary, "dataRecordGroup", dataRecordGroup);
 	}
 
 	@Override
-	public DataRecordGroup createDataRecordGroup(BatchJob indexBatchJob,
+	public DataRecordGroup createDataRecordGroup(MigrateBinary migrateBinary,
 			DataGroup filterAsDataGroup) {
-		return (DataRecordGroup) MCR.addCallAndReturnFromMRV("indexBatchJob", indexBatchJob,
+		return (DataRecordGroup) MCR.addCallAndReturnFromMRV("migrateBinary", migrateBinary,
 				"filterAsDataGroup", filterAsDataGroup);
 	}
 }

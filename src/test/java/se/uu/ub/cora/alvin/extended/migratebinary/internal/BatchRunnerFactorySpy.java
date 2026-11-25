@@ -24,11 +24,11 @@ import se.uu.ub.cora.alvin.batch.BatchRunnerFactory;
 public class BatchRunnerFactorySpy implements BatchRunnerFactory {
 
 	public BatchRunnerSpy batchRunnerSpy;
-	public BatchJob batchJob;
+	public MigrateBinaryInfo migrateInfo;
 
 	@Override
-	public BatchRunner factor(BatchJob batchJob) {
-		this.batchJob = batchJob;
+	public BatchRunner factor(MigrateBinaryInfo migrateInfo) {
+		this.migrateInfo = migrateInfo;
 
 		batchRunnerSpy = new BatchRunnerSpy();
 		return batchRunnerSpy;

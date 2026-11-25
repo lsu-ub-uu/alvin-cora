@@ -52,7 +52,7 @@ public class MigrateExtendedFunctionalityFactory implements ExtendedFunctionalit
 	}
 
 	private void createContext(ExtendedFunctionalityPosition position) {
-		contexts.add(new ExtendedFunctionalityContext(position, "indexBatchJob", 0));
+		contexts.add(new ExtendedFunctionalityContext(position, "migrateBinary", 0));
 	}
 
 	@Override
@@ -66,7 +66,7 @@ public class MigrateExtendedFunctionalityFactory implements ExtendedFunctionalit
 		if (CREATE_BEFORE_STORE.equals(position)) {
 			return createCalculateNumberToIndex();
 		}
-		return createRunBatchJob();
+		return createRunMigrateBinary();
 	}
 
 	private List<ExtendedFunctionality> createCalculateNumberToIndex() {
@@ -74,7 +74,7 @@ public class MigrateExtendedFunctionalityFactory implements ExtendedFunctionalit
 				.singletonList(new CompleteMigrateBinaryExtendedFunctionality(dependencyProvider));
 	}
 
-	private List<ExtendedFunctionality> createRunBatchJob() {
+	private List<ExtendedFunctionality> createRunMigrateBinary() {
 		BatchRunnerFactory batchRunnerFactory = new BatchRunnerFactoryImp(dependencyProvider);
 		MigrateBatchHandler indexBatchHandler = MigrateBatchHandlerImp
 				.usingBatchRunnerFactory(batchRunnerFactory);

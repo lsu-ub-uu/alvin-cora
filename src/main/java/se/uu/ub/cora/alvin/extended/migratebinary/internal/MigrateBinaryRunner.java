@@ -32,27 +32,27 @@ import se.uu.ub.cora.storage.Filter;
 import se.uu.ub.cora.storage.RecordStorage;
 import se.uu.ub.cora.storage.StorageReadResult;
 
-public class BatchJobRunner implements BatchRunner, Runnable {
+public class MigrateBinaryRunner implements BatchRunner, Runnable {
 
 	private static final long FROM_NUMBER = 1;
 	private static final long TO_NUMBER = 1000;
 	private long from = FROM_NUMBER;
 	private long to = TO_NUMBER;
 	private SpiderDependencyProvider dependencyProvider;
-	private BatchJob indexBatchJob;
+	private MigrateBinaryInfo migrateInfo;
 	private RecordStorage recordStorage;
 	private RecordTypeHandler recordTypeHandler;
 	private DataGroupTermCollector termCollector;
 	private RecordIndexer recordIndexer;
-	private BatchJobStorer storer;
+	private MigrateBinaryStorer storer;
 	private List<Error> errors = new ArrayList<>();
 	private long numberRequestedFromListing = 0;
 
-	public BatchJobRunner(SpiderDependencyProvider dependencyProvider, BatchJobStorer storer,
-			BatchJob indexBatchJob) {
+	public MigrateBinaryRunner(SpiderDependencyProvider dependencyProvider, MigrateBinaryStorer storer,
+			MigrateBinaryInfo migrateInfo) {
 		this.dependencyProvider = dependencyProvider;
 		this.storer = storer;
-		this.indexBatchJob = indexBatchJob;
+		this.migrateInfo = migrateInfo;
 	}
 
 	@Override
@@ -61,30 +61,30 @@ public class BatchJobRunner implements BatchRunner, Runnable {
 		// String metadataId = recordTypeHandler.getDefinitionId();
 		// ensureNumberOfIndexedIsZero();
 		// readListAndIndexDataInBatches(metadataId);
-		// updateIndexBatchJobAsFinished();
+		// updateMigrateBinaryAsFinished();
 	}
 
 	private void setNeededDependenciesInClass() {
 		recordStorage = dependencyProvider.getRecordStorage();
-		recordTypeHandler = dependencyProvider
-				.getRecordTypeHandler(indexBatchJob.recordTypeToIndex);
+		// recordTypeHandler =
+		// dependencyProvider.getRecordTypeHandler(migrateInfo.recordTypeToIndex);
 		termCollector = dependencyProvider.getDataGroupTermCollector();
 		recordIndexer = dependencyProvider.getRecordIndexer();
 	}
 
 	private void ensureNumberOfIndexedIsZero() {
-		indexBatchJob.numberOfProcessedRecords = 0;
+		migrateInfo.numberOfProcessedRecords = 0;
 	}
 
 	private void readListAndIndexDataInBatches(String metadataId) {
 		try {
-			while (numberRequestedFromListing < indexBatchJob.totalNumberToProcess) {
+			while (numberRequestedFromListing < migrateInfo.totalNumberToProcess) {
 				indexOneBatch(metadataId);
 			}
 		} catch (Exception e) {
-			Error error = new Error("IndexBatchJobRunner", e.getMessage());
-			indexBatchJob.errors.add(error);
-			updateIndexBatchJobAsFinished();
+			Error error = new Error("MigrateBinaryRunner", e.getMessage());
+			migrateInfo.errors.add(error);
+			updateMigrateBinaryAsFinished();
 		}
 	}
 
@@ -103,13 +103,13 @@ public class BatchJobRunner implements BatchRunner, Runnable {
 	}
 
 	private void possiblySetToNumToTotalNumberToIndex() {
-		if (indexBatchJob.totalNumberToProcess < to) {
-			to = indexBatchJob.totalNumberToProcess;
+		if (migrateInfo.totalNumberToProcess < to) {
+			to = migrateInfo.totalNumberToProcess;
 		}
 	}
 
 	private void setFromAndToInFilter(long from, long to) {
-		Filter filter = indexBatchJob.filter;
+		Filter filter = migrateInfo.filter;
 		filter.fromNo = from;
 		filter.toNo = to;
 	}
@@ -117,13 +117,13 @@ public class BatchJobRunner implements BatchRunner, Runnable {
 	private void readListAndIndexData(String metadataId) {
 		StorageReadResult readResult = readList();
 		indexData(metadataId, readResult);
-		updateAndStoreIndexBatchJob(readResult);
+		updateAndStoreMigrateBinary(readResult);
 		clearErrors();
 	}
 
 	private StorageReadResult readList() {
-		Filter filter = indexBatchJob.filter;
-		return recordStorage.readList(indexBatchJob.recordTypeToIndex, filter);
+		Filter filter = migrateInfo.filter;
+		return recordStorage.readList(migrateInfo.recordTypeToIndex, filter);
 	}
 
 	private void indexData(String metadataId, StorageReadResult readResult) {
@@ -150,47 +150,47 @@ public class BatchJobRunner implements BatchRunner, Runnable {
 				collectedTerms.indexTerms, dataRecordGroup);
 	}
 
-	private void updateAndStoreIndexBatchJob(StorageReadResult readResult) {
-		indexBatchJob.errors.addAll(errors);
-		increaseNumOfIndexedInBatchJob(readResult);
-		storeBatchJob();
+	private void updateAndStoreMigrateBinary(StorageReadResult readResult) {
+		migrateInfo.errors.addAll(errors);
+		increaseNumOfIndexedInMigrateBinary(readResult);
+		storeMigrateBinary();
 	}
 
-	private void increaseNumOfIndexedInBatchJob(StorageReadResult readResult) {
+	private void increaseNumOfIndexedInMigrateBinary(StorageReadResult readResult) {
 		int numberOfRecordsSentToIndex = readResult.listOfDataRecordGroups.size();
-		indexBatchJob.numberOfProcessedRecords += numberOfRecordsSentToIndex;
+		migrateInfo.numberOfProcessedRecords += numberOfRecordsSentToIndex;
 	}
 
-	private void storeBatchJob() {
-		storer.store(indexBatchJob);
+	private void storeMigrateBinary() {
+		storer.store(migrateInfo);
 	}
 
 	private void clearErrors() {
-		indexBatchJob.errors.clear();
+		migrateInfo.errors.clear();
 		errors.clear();
 	}
 
 	private long possiblySetToNoToTotalNumberOfRecords(long to) {
-		if (to > indexBatchJob.totalNumberToProcess) {
-			to = indexBatchJob.totalNumberToProcess;
+		if (to > migrateInfo.totalNumberToProcess) {
+			to = migrateInfo.totalNumberToProcess;
 		}
 		return to;
 	}
 
-	private void updateIndexBatchJobAsFinished() {
-		indexBatchJob.status = "finished";
-		storeBatchJob();
+	private void updateMigrateBinaryAsFinished() {
+		migrateInfo.status = "finished";
+		storeMigrateBinary();
 	}
 
 	SpiderDependencyProvider getDependencyProvider() {
 		return dependencyProvider;
 	}
 
-	BatchJob getIndexBatchJob() {
-		return indexBatchJob;
+	MigrateBinaryInfo getMigrateBinary() {
+		return migrateInfo;
 	}
 
-	BatchJobStorer getBatchJobStorer() {
+	MigrateBinaryStorer getMigrateBinaryStorer() {
 		return storer;
 	}
 }

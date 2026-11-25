@@ -21,13 +21,13 @@ package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 import static org.testng.Assert.assertSame;
 import static org.testng.Assert.assertTrue;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.alvin.batch.MigrateBatchHandler;
-import se.uu.ub.cora.storage.Filter;
 
 public class MigrateBatchHandlerTest {
 
@@ -42,15 +42,15 @@ public class MigrateBatchHandlerTest {
 
 	@Test
 	public void testInit() throws InterruptedException {
-		BatchJob batchJob = new BatchJob("someRecordType", 45, new Filter());
+		MigrateBinaryInfo migrateInfo = new MigrateBinaryInfo("someRecordId", List.of("3423"));
 
-		batchHandler.runBatchJob(batchJob);
+		batchHandler.runMigrateBinary(migrateInfo);
 
 		TimeUnit.SECONDS.sleep(2);
 
 		BatchRunnerSpy batchRunnerSpy = runnerFactory.batchRunnerSpy;
 		assertTrue(batchRunnerSpy.runWasCalled);
-		assertSame(runnerFactory.batchJob, batchJob);
+		assertSame(runnerFactory.migrateInfo, migrateInfo);
 
 	}
 

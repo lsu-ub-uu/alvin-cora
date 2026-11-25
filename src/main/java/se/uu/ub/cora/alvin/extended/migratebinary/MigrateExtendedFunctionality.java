@@ -18,13 +18,14 @@
  */
 package se.uu.ub.cora.alvin.extended.migratebinary;
 
+import java.util.List;
+
 import se.uu.ub.cora.alvin.batch.MigrateBatchHandler;
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchJob;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryInfo;
 import se.uu.ub.cora.data.DataRecordGroup;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionality;
 import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionalityData;
-import se.uu.ub.cora.storage.Filter;
 
 public class MigrateExtendedFunctionality implements ExtendedFunctionality {
 	private MigrateBatchHandler batchHandler;
@@ -38,26 +39,15 @@ public class MigrateExtendedFunctionality implements ExtendedFunctionality {
 
 	@Override
 	public void useExtendedFunctionality(ExtendedFunctionalityData data) {
-		BatchJob batchJob = fecthAndCreateBatchJob(data);
-		batchHandler.runBatchJob(batchJob);
+		MigrateBinaryInfo migrateInfo = fecthInfoFromCompleteExtendedFunctionallity(data);
+		batchHandler.runMigrateBinary(migrateInfo);
 	}
 
-	private BatchJob fecthAndCreateBatchJob(ExtendedFunctionalityData data) {
+	private MigrateBinaryInfo fecthInfoFromCompleteExtendedFunctionallity(
+			ExtendedFunctionalityData data) {
 		DataRecordGroup dataRecordGroup = data.dataRecordGroup;
-		long totalNumberToProcess = getTotalNumberToProcess(data);
-
-		return createBatchJob(null, totalNumberToProcess, null, dataRecordGroup.getId());
-	}
-
-	private BatchJob createBatchJob(String recordTypeForBatch, long totalNumberOfMatches,
-			Filter filter, String id) {
-		BatchJob batchJob = new BatchJob(recordTypeForBatch, totalNumberOfMatches, filter);
-		batchJob.recordId = id;
-		return batchJob;
-	}
-
-	private long getTotalNumberToProcess(ExtendedFunctionalityData data) {
-		return (long) data.dataSharer.get("MigrateBinary_totalNumberToProcess");
+		List<String> recordIds = (List<String>) data.dataSharer.get("MigrateBinary_recordIds");
+		return new MigrateBinaryInfo(dataRecordGroup.getId(), recordIds);
 	}
 
 	public SpiderDependencyProvider onlyForTestGetDependencyProvider() {

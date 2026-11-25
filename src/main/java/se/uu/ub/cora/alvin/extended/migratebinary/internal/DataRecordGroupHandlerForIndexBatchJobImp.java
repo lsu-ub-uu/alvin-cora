@@ -29,8 +29,8 @@ import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.DataRecordGroup;
 import se.uu.ub.cora.data.DataRecordLink;
 
-public class DataRecordGroupHandlerForIndexBatchJobImp
-		implements DataRecordGroupHandlerForIndexBatchJob {
+public class DataRecordGroupHandlerForMigrateBinaryImp
+		implements DataRecordGroupHandlerForMigrateBinary {
 	private static final String NUM_OF_PROCESSED_RECORDS = "numberOfProcessedRecords";
 	private static final String ERROR = "error";
 	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'";
@@ -38,61 +38,61 @@ public class DataRecordGroupHandlerForIndexBatchJobImp
 			.ofPattern(DATE_TIME_PATTERN);
 
 	@Override
-	public void updateDataRecordGroup(BatchJob indexBatchJob,
-			DataRecordGroup existingIndexBatchJob) {
-		updateNumOfProcessedRecordsInDataGroup(indexBatchJob, existingIndexBatchJob);
-		addIndexErrorsToDataGroup(indexBatchJob, existingIndexBatchJob);
-		updateStatusWhenJobbIsFinished(indexBatchJob, existingIndexBatchJob);
-		addUpdateRecordInfo(existingIndexBatchJob);
+	public void updateDataRecordGroup(MigrateBinaryInfo migrateBinary,
+			DataRecordGroup existingMigrateBinary) {
+		updateNumOfProcessedRecordsInDataGroup(migrateBinary, existingMigrateBinary);
+		addIndexErrorsToDataGroup(migrateBinary, existingMigrateBinary);
+		updateStatusWhenJobbIsFinished(migrateBinary, existingMigrateBinary);
+		addUpdateRecordInfo(existingMigrateBinary);
 	}
 
-	private void updateNumOfProcessedRecordsInDataGroup(BatchJob indexBatchJob,
-			DataRecordGroup existingIndexBatchJob) {
-		replaceAtomicChild(existingIndexBatchJob, NUM_OF_PROCESSED_RECORDS,
-				String.valueOf(indexBatchJob.numberOfProcessedRecords));
+	private void updateNumOfProcessedRecordsInDataGroup(MigrateBinaryInfo migrateBinary,
+			DataRecordGroup existingMigrateBinary) {
+		replaceAtomicChild(existingMigrateBinary, NUM_OF_PROCESSED_RECORDS,
+				String.valueOf(migrateBinary.numberOfProcessedRecords));
 	}
 
-	private void replaceAtomicChild(DataRecordGroup existingIndexBatchJob, String nameInData,
+	private void replaceAtomicChild(DataRecordGroup existingMigrateBinary, String nameInData,
 			String value) {
-		existingIndexBatchJob.removeFirstChildWithNameInData(nameInData);
-		addAtomicValueToDataGroup(nameInData, value, existingIndexBatchJob);
+		existingMigrateBinary.removeFirstChildWithNameInData(nameInData);
+		addAtomicValueToDataGroup(nameInData, value, existingMigrateBinary);
 	}
 
 	private void addAtomicValueToDataGroup(String nameInData, String value,
-			DataParent existingIndexBatchJob) {
+			DataParent existingMigrateBinary) {
 		DataAtomic atomic = DataProvider.createAtomicUsingNameInDataAndValue(nameInData, value);
-		existingIndexBatchJob.addChild(atomic);
+		existingMigrateBinary.addChild(atomic);
 	}
 
-	private void addIndexErrorsToDataGroup(BatchJob indexBatchJob,
-			DataParent existingIndexBatchJob) {
-		int repeatId = initilizeRepeatIdForError(existingIndexBatchJob);
-		for (Error indexError : indexBatchJob.errors) {
-			convertIndexErrorAndAddToDataGroup(existingIndexBatchJob, indexError, repeatId);
+	private void addIndexErrorsToDataGroup(MigrateBinaryInfo migrateBinary,
+			DataParent existingMigrateBinary) {
+		int repeatId = initilizeRepeatIdForError(existingMigrateBinary);
+		for (Error indexError : migrateBinary.errors) {
+			convertIndexErrorAndAddToDataGroup(existingMigrateBinary, indexError, repeatId);
 			repeatId++;
 		}
 	}
 
-	private int initilizeRepeatIdForError(DataParent existingIndexBatchJob) {
-		return (existingIndexBatchJob.getAllGroupsWithNameInData(ERROR).size()) + 1;
+	private int initilizeRepeatIdForError(DataParent existingMigrateBinary) {
+		return (existingMigrateBinary.getAllGroupsWithNameInData(ERROR).size()) + 1;
 	}
 
-	private void convertIndexErrorAndAddToDataGroup(DataParent existingIndexBatchJob,
+	private void convertIndexErrorAndAddToDataGroup(DataParent existingMigrateBinary,
 			Error indexError, int repeatId) {
 		DataGroup error = DataProvider.createGroupUsingNameInData(ERROR);
-		existingIndexBatchJob.addChild(error);
+		existingMigrateBinary.addChild(error);
 		error.setRepeatId(String.valueOf(repeatId));
 		addAtomicValueToDataGroup("recordId", indexError.recordId, error);
 		addAtomicValueToDataGroup("message", indexError.message, error);
 	}
 
-	private void updateStatusWhenJobbIsFinished(BatchJob indexBatchJob,
-			DataRecordGroup existingIndexBatchJob) {
-		replaceAtomicChild(existingIndexBatchJob, "status", String.valueOf(indexBatchJob.status));
+	private void updateStatusWhenJobbIsFinished(MigrateBinaryInfo migrateBinary,
+			DataRecordGroup existingMigrateBinary) {
+		replaceAtomicChild(existingMigrateBinary, "status", String.valueOf(migrateBinary.status));
 	}
 
-	private void addUpdateRecordInfo(DataRecordGroup existingIndexBatchJob) {
-		DataGroup recordInfo = existingIndexBatchJob.getFirstGroupWithNameInData("recordInfo");
+	private void addUpdateRecordInfo(DataRecordGroup existingMigrateBinary) {
+		DataGroup recordInfo = existingMigrateBinary.getFirstGroupWithNameInData("recordInfo");
 		addUpdatedDataGroup(recordInfo);
 	}
 
@@ -127,45 +127,45 @@ public class DataRecordGroupHandlerForIndexBatchJobImp
 	}
 
 	@Override
-	public DataRecordGroup createDataRecordGroup(BatchJob indexBatchJob,
+	public DataRecordGroup createDataRecordGroup(MigrateBinaryInfo migrateBinary,
 			DataGroup filterAsDataGroup) {
 		DataRecordGroup dataRecordGroup = DataProvider
-				.createRecordGroupUsingNameInData("indexBatchJob");
+				.createRecordGroupUsingNameInData("migrateBinary");
 		addRecordInfo(dataRecordGroup);
-		addRecordTypeToIndex(indexBatchJob, dataRecordGroup);
-		addRecordStatus(indexBatchJob, dataRecordGroup);
-		addNumberOfProcessedRecords(indexBatchJob, dataRecordGroup);
-		addTotalNumberToIndex(indexBatchJob, dataRecordGroup);
+		addRecordTypeToIndex(migrateBinary, dataRecordGroup);
+		addRecordStatus(migrateBinary, dataRecordGroup);
+		addNumberOfProcessedRecords(migrateBinary, dataRecordGroup);
+		addTotalNumberToIndex(migrateBinary, dataRecordGroup);
 		possiblyAddFilter(dataRecordGroup, filterAsDataGroup);
-		addIndexErrorsToDataGroup(indexBatchJob, dataRecordGroup);
+		addIndexErrorsToDataGroup(migrateBinary, dataRecordGroup);
 		return dataRecordGroup;
 	}
 
 	private void addRecordInfo(DataRecordGroup dataRecordGroup) {
 		dataRecordGroup.setDataDivider("coraData");
-		dataRecordGroup.setValidationType("indexBatchJob");
+		dataRecordGroup.setValidationType("migrateBinary");
 	}
 
-	private void addRecordTypeToIndex(BatchJob indexBatchJob,
+	private void addRecordTypeToIndex(MigrateBinaryInfo migrateBinary,
 			DataRecordGroup dataRecordGroup) {
-		addAtomicValueToDataGroup("recordTypeToIndex", indexBatchJob.recordTypeToIndex,
+		addAtomicValueToDataGroup("recordTypeToIndex", migrateBinary.recordTypeToIndex,
 				dataRecordGroup);
 	}
 
-	private void addRecordStatus(BatchJob indexBatchJob, DataRecordGroup dataRecordGroup) {
-		addAtomicValueToDataGroup("status", indexBatchJob.status, dataRecordGroup);
+	private void addRecordStatus(MigrateBinaryInfo migrateBinary, DataRecordGroup dataRecordGroup) {
+		addAtomicValueToDataGroup("status", migrateBinary.status, dataRecordGroup);
 	}
 
-	private void addNumberOfProcessedRecords(BatchJob indexBatchJob,
+	private void addNumberOfProcessedRecords(MigrateBinaryInfo migrateBinary,
 			DataRecordGroup dataRecordGroup) {
-		long numOfProcessedRecords = indexBatchJob.numberOfProcessedRecords;
+		long numOfProcessedRecords = migrateBinary.numberOfProcessedRecords;
 		addAtomicValueToDataGroup(NUM_OF_PROCESSED_RECORDS, String.valueOf(numOfProcessedRecords),
 				dataRecordGroup);
 	}
 
-	private void addTotalNumberToIndex(BatchJob indexBatchJob,
+	private void addTotalNumberToIndex(MigrateBinaryInfo migrateBinary,
 			DataRecordGroup dataRecordGroup) {
-		long totalNumberToIndex = indexBatchJob.totalNumberToProcess;
+		long totalNumberToIndex = migrateBinary.totalNumberToProcess;
 		addAtomicValueToDataGroup("totalNumberToIndex", String.valueOf(totalNumberToIndex),
 				dataRecordGroup);
 	}
