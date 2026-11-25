@@ -19,7 +19,6 @@
  */
 package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 
-import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.data.DataRecordGroup;
 
 /**
@@ -38,18 +37,5 @@ public interface DataRecordGroupHandlerForMigrateBinary {
 	 *            Is the updated DataRecordGroup containing the changes from migrateBinary
 	 */
 	void updateDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo, DataRecordGroup dataGroup);
-
-	/**
-	 * createDataGroup
-	 * 
-	 * @param migrateBinaryInfo
-	 *            An MigrateBinary containing information about what to index, including RecordType,
-	 *            the number of records to index, and Filter
-	 * @param filterAsDataGroup
-	 *            A DataGroup, filter, as set by the user
-	 * @return A {@link DataRecordGroup} with the created migrateBinary
-	 */
-	DataRecordGroup createDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo,
-			DataGroup filterAsDataGroup);
 
 }

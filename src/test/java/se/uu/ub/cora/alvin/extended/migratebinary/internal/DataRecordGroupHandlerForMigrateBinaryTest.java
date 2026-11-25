@@ -35,41 +35,39 @@ import se.uu.ub.cora.data.spies.DataAtomicSpy;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
 import se.uu.ub.cora.data.spies.DataGroupSpy;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
-import se.uu.ub.cora.storage.Filter;
 
 public class DataRecordGroupHandlerForMigrateBinaryTest {
-
-	private static final String SOME_RECORD_TYPE = "someRecordType";
-
+	private static final int ERROR_NUMBER_TO_GET_FACTORED = 1;
+	private static final int TS_UPDATED_NUMBER_TO_GET_FACTORED = 0;
+	private static final String SOME_MIGRATE_BINARY_RECORD_ID = "someRecordId";
 	private static final String DATE_TIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSSSSS'Z'";
 	private static DateTimeFormatter dateTimeFormatter = DateTimeFormatter
 			.ofPattern(DATE_TIME_PATTERN);
-
 	private MigrateBinaryInfo migrateBinary;
 	private DataRecordGroupHandlerForMigrateBinaryImp dataGroupHandler;
 	private DataFactorySpy dataFactorySpy;
-	/**
-	 * numberOfFactoredAtomics
-	 */
-	int nfa = 0;
-	/**
-	 * numberOfFactoredRecordLinks
-	 */
-	int nfrl = 0;
-	/**
-	 * numberOfFactoredGroups
-	 */
-	int nfg = 0;
+	private List<String> recordIds;
+	private DataRecordGroupSpy existingMigrateBinary;
+	private DataGroupSpy recordInfoG;
 
 	@BeforeMethod
 	public void beforeMethod() {
-		nfa = 0;
-		nfrl = 0;
-		nfg = 0;
+		recordIds = List.of("12", "23");
 		setUpProviders();
 
 		migrateBinary = createMigrateBinary();
 		dataGroupHandler = new DataRecordGroupHandlerForMigrateBinaryImp();
+
+		existingMigrateBinary = new DataRecordGroupSpy();
+
+		// setListOfErrors
+		List<DataGroupSpy> listOfErrorsSpies = List.of(new DataGroupSpy(), new DataGroupSpy());
+		existingMigrateBinary.MRV.setReturnValues("getAllGroupsWithNameInData",
+				List.of(listOfErrorsSpies), "error");
+
+		recordInfoG = new DataGroupSpy();
+		existingMigrateBinary.MRV.setSpecificReturnValuesSupplier("getFirstGroupWithNameInData",
+				() -> recordInfoG, "recordInfo");
 	}
 
 	private void setUpProviders() {
@@ -77,137 +75,9 @@ public class DataRecordGroupHandlerForMigrateBinaryTest {
 		DataProvider.onlyForTestSetDataFactory(dataFactorySpy);
 	}
 
-	String dataGroupLayout = """
-			migrateBinary
-				recordInfo
-					createdBy user someSuperUser
-					tsCreated 2021-05-03T14:12:11.657482Z
-					updated
-						tsUpdated 2021-06-02T14:45:11.657482Z
-						updatedBy user someUserId
-				numOfProcessedRecords 34
-				totalNumberToIndex 34
-				status someStatus
-				error
-					recordId someRecordId
-					message some read error message
-				""";
-
-	Integer callsToAddChildForCheckingMigrateBinary = 0;
-	Integer callsToRemoveFirstChildWithNameForMigrateBinary = 0;
-
-	@Test
-	public void testUpdateDataGroupWithInfoFromMigrateBinaryForUpdate() {
-		callsToAddChildForCheckingMigrateBinary = 0;
-		callsToRemoveFirstChildWithNameForMigrateBinary = 0;
-		DataRecordGroupSpy existingMigrateBinary = new DataRecordGroupSpy();
-		// setListOfErrors
-		List<DataGroupSpy> listOfErrorsSpies = List.of(new DataGroupSpy(), new DataGroupSpy());
-		int firstErrorRepeatId = listOfErrorsSpies.size() + 1;
-		existingMigrateBinary.MRV.setReturnValues("getAllGroupsWithNameInData",
-				List.of(listOfErrorsSpies), "error");
-
-		// recordInfoSpy
-		DataGroupSpy recordInfoG = new DataGroupSpy();
-		existingMigrateBinary.MRV.setReturnValues("getFirstGroupWithNameInData",
-				List.of(recordInfoG), "recordInfo");
-		// setListOfUpdated
-		List<DataGroupSpy> listOfUpdatedSpies = List.of(new DataGroupSpy());
-		int firstUpdatedRepeatId = listOfUpdatedSpies.size() + 1;
-		recordInfoG.MRV.setReturnValues("getAllGroupsWithNameInData", List.of(listOfUpdatedSpies),
-				"updated");
-
-		LocalDateTime dateTimeBefore = whatTimeIsIt().minus(2, ChronoUnit.SECONDS);
-
-		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
-
-		LocalDateTime dateTimeAfter = whatTimeIsIt().plus(2, ChronoUnit.SECONDS);
-
-		assertNumberOfProcessedRecords(existingMigrateBinary);
-		assertErrorsFromMigrateBinaryAddedToGroupAndFirstRepeatId(existingMigrateBinary,
-				firstErrorRepeatId);
-		assertStatus(existingMigrateBinary);
-		assertNewUpdatedAddedToRecordInfo(existingMigrateBinary, firstUpdatedRepeatId,
-				dateTimeBefore, dateTimeAfter);
-	}
-
-	private void assertNewUpdatedAddedToRecordInfo(DataRecordGroupSpy existingMigrateBinary,
-			int firstUpdatedRepeatId, LocalDateTime dateTimeBefore, LocalDateTime dateTimeAfter) {
-		existingMigrateBinary.MCR.assertParameters("getFirstGroupWithNameInData", 0, "recordInfo");
-		DataGroupSpy recordInfo = (DataGroupSpy) existingMigrateBinary.MCR
-				.getReturnValue("getFirstGroupWithNameInData", 0);
-
-		recordInfo.MCR.assertParameters("getAllGroupsWithNameInData", 0, "updated");
-
-		dataFactorySpy.MCR.assertParameters("factorGroupUsingNameInData", nfg, "updated");
-		DataGroupSpy updated = (DataGroupSpy) dataFactorySpy.MCR
-				.getReturnValue("factorGroupUsingNameInData", nfg);
-		recordInfo.MCR.assertParameters("addChild", 0, updated);
-		updated.MCR.assertParameters("setRepeatId", 0, String.valueOf(firstUpdatedRepeatId));
-		callsToAddChildForCheckingMigrateBinary++;
-		nfg++;
-
-		assertUpdateBy(updated);
-		assertTsUpdated(dateTimeBefore, dateTimeAfter, updated);
-	}
-
-	private void assertUpdateBy(DataGroupSpy updated) {
-		dataFactorySpy.MCR.assertParameters("factorRecordLinkUsingNameInDataAndTypeAndId", nfrl,
-				"updatedBy", "user", "system");
-		var updatedBy = dataFactorySpy.MCR
-				.getReturnValue("factorRecordLinkUsingNameInDataAndTypeAndId", nfrl);
-		updated.MCR.assertParameters("addChild", 0, updatedBy);
-		nfrl++;
-	}
-
-	private void assertTsUpdated(LocalDateTime dateTimeBefore, LocalDateTime dateTimeAfter,
-			DataGroupSpy updated) {
-		dataFactorySpy.MCR.assertParameters("factorAtomicUsingNameInDataAndValue", nfa,
-				"tsUpdated");
-		DataAtomicSpy tsUpdated = (DataAtomicSpy) dataFactorySpy.MCR
-				.getReturnValue("factorAtomicUsingNameInDataAndValue", nfa);
-		String tsUpdatedValue = (String) dataFactorySpy.MCR
-				.getParameterForMethodAndCallNumberAndParameter(
-						"factorAtomicUsingNameInDataAndValue", nfa, "value");
-		nfa++;
-
-		LocalDateTime tsUpdatedDateTime = LocalDateTime.parse(tsUpdatedValue, dateTimeFormatter);
-		assertTrue(dateTimeBefore.isBefore(tsUpdatedDateTime));
-		assertTrue(dateTimeAfter.isAfter(tsUpdatedDateTime));
-
-		updated.MCR.assertParameters("addChild", 1, tsUpdated);
-	}
-
-	private LocalDateTime whatTimeIsIt() {
-		return LocalDateTime.now();
-	}
-
-	private void assertNumberOfProcessedRecords(DataRecordGroupSpy existingMigrateBinary) {
-		existingMigrateBinary.MCR.assertParameters("removeFirstChildWithNameInData",
-				callsToRemoveFirstChildWithNameForMigrateBinary, "numberOfProcessedRecords");
-		callsToRemoveFirstChildWithNameForMigrateBinary++;
-
-		assertFactoredAtomicWithNameAndValueAddedToAsNo("numberOfProcessedRecords",
-				String.valueOf(migrateBinary.numberOfProcessedRecords), existingMigrateBinary,
-				callsToAddChildForCheckingMigrateBinary);
-		callsToAddChildForCheckingMigrateBinary++;
-	}
-
-	private void assertStatus(DataRecordGroupSpy existingMigrateBinary) {
-		existingMigrateBinary.MCR.assertParameters("removeFirstChildWithNameInData",
-				callsToRemoveFirstChildWithNameForMigrateBinary, "status");
-		callsToRemoveFirstChildWithNameForMigrateBinary++;
-
-		assertFactoredAtomicWithNameAndValueAddedToAsNo("status",
-				String.valueOf(migrateBinary.status), existingMigrateBinary,
-				callsToAddChildForCheckingMigrateBinary);
-		callsToAddChildForCheckingMigrateBinary++;
-	}
-
 	private MigrateBinaryInfo createMigrateBinary() {
-		Filter filter = new Filter();
-
-		MigrateBinaryInfo newMigrateBinary = new MigrateBinaryInfo(SOME_RECORD_TYPE);
+		MigrateBinaryInfo newMigrateBinary = new MigrateBinaryInfo(SOME_MIGRATE_BINARY_RECORD_ID,
+				recordIds);
 		createAndAddErrors(newMigrateBinary);
 		return newMigrateBinary;
 	}
@@ -219,113 +89,172 @@ public class DataRecordGroupHandlerForMigrateBinaryTest {
 		migrateBinary.errors = errors;
 	}
 
+	String dataGroupLayout = """
+			migrateBinary
+				recordInfo
+					createdBy user someSuperUser
+					tsCreated 2021-05-03T14:12:11.657482Z
+					updated
+						tsUpdated 2021-06-02T14:45:11.657482Z
+						updatedBy user someUserId
+				recordId migrateBinary:123123123123
+				totalNumberToProcess 34
+				numberOfProcessedRecords 34
+				numberOfMigratedBinaries 34
+				amountOfMigratedData 3423434434
+				status someStatus
+				error
+					recordId someRecordId
+					message some read error message
+				""";
+
 	@Test
-	public void testConvertMigrateBinaryToDataGroupForCreate() {
-		DataGroupSpy filterAsDataGroup = new DataGroupSpy();
+	public void testTotalNumberToProcess() {
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
 
-		DataRecordGroupSpy createdRecordGroup = (DataRecordGroupSpy) dataGroupHandler
-				.createDataRecordGroup(migrateBinary, filterAsDataGroup);
-
-		dataFactorySpy.MCR.assertParameters("factorRecordGroupUsingNameInData", 0, "migrateBinary");
-		dataFactorySpy.MCR.assertReturn("factorRecordGroupUsingNameInData", 0, createdRecordGroup);
-
-		assertCorrectRecordInfo(createdRecordGroup);
-
-		assertFactoredAtomicWithNameAndValueAddedToAsNo("recordTypeToIndex",
-				migrateBinary.recordTypeToIndex, createdRecordGroup,
-				callsToAddChildForCheckingMigrateBinary);
-		callsToAddChildForCheckingMigrateBinary++;
-		assertFactoredAtomicWithNameAndValueAddedToAsNo("status", "started", createdRecordGroup,
-				callsToAddChildForCheckingMigrateBinary);
-		callsToAddChildForCheckingMigrateBinary++;
-		assertFactoredAtomicWithNameAndValueAddedToAsNo("numberOfProcessedRecords", "0",
-				createdRecordGroup, callsToAddChildForCheckingMigrateBinary);
-		callsToAddChildForCheckingMigrateBinary++;
-		assertFactoredAtomicWithNameAndValueAddedToAsNo("totalNumberToIndex", "10",
-				createdRecordGroup, callsToAddChildForCheckingMigrateBinary);
-		callsToAddChildForCheckingMigrateBinary++;
-		createdRecordGroup.MCR.assertParameters("addChild", callsToAddChildForCheckingMigrateBinary,
-				filterAsDataGroup);
-		callsToAddChildForCheckingMigrateBinary++;
-
-		assertErrorsFromMigrateBinaryAddedToGroupAndFirstRepeatId(createdRecordGroup, 1);
-		createdRecordGroup.MCR.assertNumberOfCallsToMethod("addChild",
-				callsToAddChildForCheckingMigrateBinary);
+		assertRemoveAndAdded("totalNumberToProcess", migrateBinary.totalNumberToProcess);
 	}
 
-	private void assertCorrectRecordInfo(DataRecordGroupSpy createdRecordGroup) {
-		createdRecordGroup.MCR.assertParameters("setDataDivider", 0, "coraData");
-		createdRecordGroup.MCR.assertParameters("setValidationType", 0, "migrateBinary");
+	@Test
+	public void testNumberOfProcessedRecords() {
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
+
+		assertRemoveAndAdded("numberOfProcessedRecords", migrateBinary.numberOfProcessedRecords);
 	}
 
-	private void assertFactoredAtomicWithNameAndValueAddedToAsNo(String name, String value,
-			DataRecordGroupSpy existingMigrateBinary, int addedNo) {
-		dataFactorySpy.MCR.assertParameters("factorAtomicUsingNameInDataAndValue", nfa, name,
-				value);
-		DataAtomicSpy factoredAtomic = (DataAtomicSpy) dataFactorySpy.MCR
-				.getReturnValue("factorAtomicUsingNameInDataAndValue", nfa);
-		existingMigrateBinary.MCR.assertParameters("addChild", addedNo, factoredAtomic);
-		nfa++;
+	@Test
+	public void testNumberOfMigratedBinaries() {
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
+
+		assertRemoveAndAdded("numberOfMigratedBinaries", migrateBinary.numberOfMigratedBinaries);
 	}
 
-	private void assertErrorsFromMigrateBinaryAddedToGroupAndFirstRepeatId(
-			DataRecordGroupSpy existingMigrateBinary, int startRepeatId) {
-		int repeatId = startRepeatId;
+	@Test
+	public void testAmountOfMigratedData() {
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
+
+		assertRemoveAndAdded("amountOfMigratedData", migrateBinary.amountOfMigratedData);
+	}
+
+	@Test
+	public void testStatus() {
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
+
+		assertRemoveAndAdded("status", migrateBinary.status);
+	}
+
+	@Test
+	public void testErrors() {
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
+
+		existingMigrateBinary.MCR.assertCalledParameters("removeAllChildrenWithNameInData",
+				"error");
+		assertErrorsFromMigrateBinaryAddedToGroup(existingMigrateBinary);
+	}
+
+	private void assertErrorsFromMigrateBinaryAddedToGroup(
+			DataRecordGroupSpy existingMigrateBinary) {
+		int repeatId = migrateBinary.errors.size() + 1;
+		int errorNo = ERROR_NUMBER_TO_GET_FACTORED;
 		for (Error indexError : migrateBinary.errors) {
-			assertFactoredGroupWithNameAndRepeatIdAddedToAsNo("error", String.valueOf(repeatId),
-					existingMigrateBinary, callsToAddChildForCheckingMigrateBinary);
-			callsToAddChildForCheckingMigrateBinary++;
-
-			DataGroupSpy errorGroup = (DataGroupSpy) dataFactorySpy.MCR
-					.getReturnValue("factorGroupUsingNameInData", nfg);
-			nfg++;
+			DataGroupSpy errorGroup = assertFactoredGroupWithNameAndRepeatId(errorNo, "error",
+					String.valueOf(repeatId), existingMigrateBinary);
 
 			assertFactoredAtomicWithNameAndValueAddedToGroupAsNo("recordId", indexError.recordId,
-					errorGroup, 0);
+					errorGroup);
 			assertFactoredAtomicWithNameAndValueAddedToGroupAsNo("message", indexError.message,
-					errorGroup, 1);
+					errorGroup);
 			repeatId++;
+			errorNo++;
 		}
+	}
+
+	private DataGroupSpy assertFactoredGroupWithNameAndRepeatId(int errorNo, String name,
+			String repeatId, DataRecordGroupSpy existingMigrateBinary) {
+		dataFactorySpy.MCR.assertParameters("factorGroupUsingNameInData", errorNo, name);
+		DataGroupSpy factoredGroup = (DataGroupSpy) dataFactorySpy.MCR
+				.getReturnValue("factorGroupUsingNameInData", errorNo);
+		factoredGroup.MCR.assertCalledParameters("setRepeatId", repeatId);
+		existingMigrateBinary.MCR.assertCalledParameters("addChild", factoredGroup);
+		return factoredGroup;
 	}
 
 	private void assertFactoredAtomicWithNameAndValueAddedToGroupAsNo(String name, String value,
-			DataGroupSpy existingMigrateBinary, int addedNo) {
-		dataFactorySpy.MCR.assertParameters("factorAtomicUsingNameInDataAndValue", nfa, name,
-				value);
-		DataAtomicSpy factoredAtomic = (DataAtomicSpy) dataFactorySpy.MCR
-				.getReturnValue("factorAtomicUsingNameInDataAndValue", nfa);
-		existingMigrateBinary.MCR.assertParameters("addChild", addedNo, factoredAtomic);
-		nfa++;
+			DataGroupSpy dataGroup) {
+		var factoredAtomic = dataFactorySpy.MCR
+				.assertCalledParametersReturn("factorAtomicUsingNameInDataAndValue", name, value);
+		dataGroup.MCR.assertCalledParameters("addChild", factoredAtomic);
 	}
 
-	private void assertFactoredGroupWithNameAndRepeatIdAddedToAsNo(String name, String repeatId,
-			DataRecordGroupSpy existingMigrateBinary, int addedNo) {
-		dataFactorySpy.MCR.assertParameters("factorGroupUsingNameInData", nfg, name);
-		DataGroupSpy factoredGroup = (DataGroupSpy) dataFactorySpy.MCR
-				.getReturnValue("factorGroupUsingNameInData", nfg);
-		if (!"".equals(repeatId)) {
-			factoredGroup.MCR.assertParameters("setRepeatId", 0, repeatId);
-		}
-		existingMigrateBinary.MCR.assertParameters("addChild", addedNo, factoredGroup);
+	private void assertRemoveAndAdded(String nameInData, String value) {
+		existingMigrateBinary.MCR.assertCalledParameters("removeFirstChildWithNameInData",
+				nameInData);
+		assertFactoredAtomicWithNameAndValueAddedToAsNo(nameInData, value);
 	}
 
-	@Test
-	public void testCreateDataGroupFromMigrateBinaryNoFilterIfFilterIsEmpty() {
-		DataGroupSpy filterAsData = new DataGroupSpy("filter");
+	private void assertRemoveAndAdded(String nameInData, long value) {
+		existingMigrateBinary.MCR.assertCalledParameters("removeFirstChildWithNameInData",
+				nameInData);
+		assertFactoredAtomicWithNameAndValueAddedToAsNo(nameInData, String.valueOf(value));
+	}
 
-		DataRecordGroupSpy createdRecordGroup = (DataRecordGroupSpy) dataGroupHandler
-				.createDataRecordGroup(migrateBinary, filterAsData);
-		createdRecordGroup.MCR.assertNumberOfCallsToMethod("addChild", 6);
+	private void assertFactoredAtomicWithNameAndValueAddedToAsNo(String name, String value) {
+		var factoredAtomic = dataFactorySpy.MCR
+				.assertCalledParametersReturn("factorAtomicUsingNameInDataAndValue", name, value);
+		existingMigrateBinary.MCR.assertCalledParameters("addChild", factoredAtomic);
 	}
 
 	@Test
-	public void testCreateDataGroupFromMigrateBinaryEmptyErrors() {
-		MigrateBinaryInfo newMigrateBinary = new MigrateBinaryInfo("place");
+	public void testUpdatedReplacedInRecordInfo() {
+		LocalDateTime dateTimeBefore = whatTimeIsIt().minus(2, ChronoUnit.SECONDS);
 
-		DataRecordGroupSpy createdRecordGroup = (DataRecordGroupSpy) dataGroupHandler
-				.createDataRecordGroup(newMigrateBinary, new DataGroupSpy("filter"));
+		dataGroupHandler.updateDataRecordGroup(migrateBinary, existingMigrateBinary);
 
-		createdRecordGroup.MCR.assertNumberOfCallsToMethod("addChild", 4);
+		LocalDateTime dateTimeAfter = whatTimeIsIt().plus(2, ChronoUnit.SECONDS);
+
+		assertNewUpdatedReplacedInRecordInfo(existingMigrateBinary, dateTimeBefore, dateTimeAfter);
+	}
+
+	private void assertNewUpdatedReplacedInRecordInfo(DataRecordGroupSpy existingMigrateBinary,
+			LocalDateTime dateTimeBefore, LocalDateTime dateTimeAfter) {
+		existingMigrateBinary.MCR.assertParameters("getFirstGroupWithNameInData", 0, "recordInfo");
+
+		recordInfoG.MCR.assertCalledParameters("removeAllChildrenWithNameInData", "updated");
+
+		DataGroupSpy updated = (DataGroupSpy) dataFactorySpy.MCR
+				.assertCalledParametersReturn("factorGroupUsingNameInData", "updated");
+
+		recordInfoG.MCR.assertCalledParameters("addChild", updated);
+		updated.MCR.assertParameters("setRepeatId", 0, "0");
+
+		assertUpdateBy(updated);
+		assertTsUpdated(dateTimeBefore, dateTimeAfter, updated);
+	}
+
+	private void assertUpdateBy(DataGroupSpy updated) {
+		var updatedBy = dataFactorySpy.MCR.assertCalledParametersReturn(
+				"factorRecordLinkUsingNameInDataAndTypeAndId", "updatedBy", "user", "system");
+		updated.MCR.assertCalledParameters("addChild", updatedBy);
+	}
+
+	private void assertTsUpdated(LocalDateTime dateTimeBefore, LocalDateTime dateTimeAfter,
+			DataGroupSpy updated) {
+		DataAtomicSpy tsUpdated = (DataAtomicSpy) dataFactorySpy.MCR
+				.assertCalledParametersReturn("factorAtomicUsingNameInDataAndValue", "tsUpdated");
+		String tsUpdatedValue = (String) dataFactorySpy.MCR
+				.getParameterForMethodAndCallNumberAndParameter(
+						"factorAtomicUsingNameInDataAndValue", TS_UPDATED_NUMBER_TO_GET_FACTORED,
+						"value");
+
+		LocalDateTime tsUpdatedDateTime = LocalDateTime.parse(tsUpdatedValue, dateTimeFormatter);
+		assertTrue(dateTimeBefore.isBefore(tsUpdatedDateTime));
+		assertTrue(dateTimeAfter.isAfter(tsUpdatedDateTime));
+
+		updated.MCR.assertCalledParameters("addChild", tsUpdated);
+	}
+
+	private LocalDateTime whatTimeIsIt() {
+		return LocalDateTime.now();
 	}
 
 }

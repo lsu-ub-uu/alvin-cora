@@ -40,16 +40,37 @@ public class DataRecordGroupHandlerForMigrateBinaryImp
 	@Override
 	public void updateDataRecordGroup(MigrateBinaryInfo migrateBinary,
 			DataRecordGroup existingMigrateBinary) {
-		updateNumOfProcessedRecordsInDataGroup(migrateBinary, existingMigrateBinary);
-		addIndexErrorsToDataGroup(migrateBinary, existingMigrateBinary);
-		updateStatusWhenJobbIsFinished(migrateBinary, existingMigrateBinary);
-		addUpdateRecordInfo(existingMigrateBinary);
+		replaceUpdateRecordInfo(existingMigrateBinary);
+		updateTotalNumberToProcess(migrateBinary, existingMigrateBinary);
+		updateNumOfProcessedRecords(migrateBinary, existingMigrateBinary);
+		updateNumberOfMigratedBinaries(migrateBinary, existingMigrateBinary);
+		updateAmountOfMigratedData(migrateBinary, existingMigrateBinary);
+		replaceIndexErrors(migrateBinary, existingMigrateBinary);
+		updateStatus(migrateBinary, existingMigrateBinary);
 	}
 
-	private void updateNumOfProcessedRecordsInDataGroup(MigrateBinaryInfo migrateBinary,
+	private void updateTotalNumberToProcess(MigrateBinaryInfo migrateBinary,
+			DataRecordGroup existingMigrateBinary) {
+		replaceAtomicChild(existingMigrateBinary, "totalNumberToProcess",
+				String.valueOf(migrateBinary.totalNumberToProcess));
+	}
+
+	private void updateNumOfProcessedRecords(MigrateBinaryInfo migrateBinary,
 			DataRecordGroup existingMigrateBinary) {
 		replaceAtomicChild(existingMigrateBinary, NUM_OF_PROCESSED_RECORDS,
 				String.valueOf(migrateBinary.numberOfProcessedRecords));
+	}
+
+	private void updateNumberOfMigratedBinaries(MigrateBinaryInfo migrateBinary,
+			DataRecordGroup existingMigrateBinary) {
+		replaceAtomicChild(existingMigrateBinary, "numberOfMigratedBinaries",
+				String.valueOf(migrateBinary.numberOfMigratedBinaries));
+	}
+
+	private void updateAmountOfMigratedData(MigrateBinaryInfo migrateBinary,
+			DataRecordGroup existingMigrateBinary) {
+		replaceAtomicChild(existingMigrateBinary, "amountOfMigratedData",
+				String.valueOf(migrateBinary.amountOfMigratedData));
 	}
 
 	private void replaceAtomicChild(DataRecordGroup existingMigrateBinary, String nameInData,
@@ -64,8 +85,9 @@ public class DataRecordGroupHandlerForMigrateBinaryImp
 		existingMigrateBinary.addChild(atomic);
 	}
 
-	private void addIndexErrorsToDataGroup(MigrateBinaryInfo migrateBinary,
+	private void replaceIndexErrors(MigrateBinaryInfo migrateBinary,
 			DataParent existingMigrateBinary) {
+		existingMigrateBinary.removeAllChildrenWithNameInData(ERROR);
 		int repeatId = initilizeRepeatIdForError(existingMigrateBinary);
 		for (Error indexError : migrateBinary.errors) {
 			convertIndexErrorAndAddToDataGroup(existingMigrateBinary, indexError, repeatId);
@@ -86,27 +108,23 @@ public class DataRecordGroupHandlerForMigrateBinaryImp
 		addAtomicValueToDataGroup("message", indexError.message, error);
 	}
 
-	private void updateStatusWhenJobbIsFinished(MigrateBinaryInfo migrateBinary,
+	private void updateStatus(MigrateBinaryInfo migrateBinary,
 			DataRecordGroup existingMigrateBinary) {
-		replaceAtomicChild(existingMigrateBinary, "status", String.valueOf(migrateBinary.status));
+		replaceAtomicChild(existingMigrateBinary, "status", migrateBinary.status);
 	}
 
-	private void addUpdateRecordInfo(DataRecordGroup existingMigrateBinary) {
+	private void replaceUpdateRecordInfo(DataRecordGroup existingMigrateBinary) {
 		DataGroup recordInfo = existingMigrateBinary.getFirstGroupWithNameInData("recordInfo");
-		addUpdatedDataGroup(recordInfo);
+		replaceUpdatedDataGroup(recordInfo);
 	}
 
-	private void addUpdatedDataGroup(DataGroup recordInfo) {
+	private void replaceUpdatedDataGroup(DataGroup recordInfo) {
+		recordInfo.removeAllChildrenWithNameInData("updated");
 		DataGroup updatedDataGroup = DataProvider.createGroupUsingNameInData("updated");
 		createAndAddUpdatedBy(updatedDataGroup);
 		createAndAddTsUpdated(updatedDataGroup);
-		setRepeatIdOnUpdated(recordInfo, updatedDataGroup);
+		updatedDataGroup.setRepeatId("0");
 		recordInfo.addChild(updatedDataGroup);
-	}
-
-	private void setRepeatIdOnUpdated(DataGroup recordInfo, DataGroup updatedDataGroup) {
-		int numberOfUpdated = recordInfo.getAllGroupsWithNameInData("updated").size();
-		updatedDataGroup.setRepeatId(String.valueOf(numberOfUpdated + 1));
 	}
 
 	private void createAndAddUpdatedBy(DataGroup updatedDataGroup) {
@@ -126,53 +144,4 @@ public class DataRecordGroupHandlerForMigrateBinaryImp
 		return currentDateTime.format(dateTimeFormatter);
 	}
 
-	@Override
-	public DataRecordGroup createDataRecordGroup(MigrateBinaryInfo migrateBinary,
-			DataGroup filterAsDataGroup) {
-		DataRecordGroup dataRecordGroup = DataProvider
-				.createRecordGroupUsingNameInData("migrateBinary");
-		addRecordInfo(dataRecordGroup);
-		addRecordTypeToIndex(migrateBinary, dataRecordGroup);
-		addRecordStatus(migrateBinary, dataRecordGroup);
-		addNumberOfProcessedRecords(migrateBinary, dataRecordGroup);
-		addTotalNumberToIndex(migrateBinary, dataRecordGroup);
-		possiblyAddFilter(dataRecordGroup, filterAsDataGroup);
-		addIndexErrorsToDataGroup(migrateBinary, dataRecordGroup);
-		return dataRecordGroup;
-	}
-
-	private void addRecordInfo(DataRecordGroup dataRecordGroup) {
-		dataRecordGroup.setDataDivider("coraData");
-		dataRecordGroup.setValidationType("migrateBinary");
-	}
-
-	private void addRecordTypeToIndex(MigrateBinaryInfo migrateBinary,
-			DataRecordGroup dataRecordGroup) {
-		addAtomicValueToDataGroup("recordTypeToIndex", migrateBinary.recordTypeToIndex,
-				dataRecordGroup);
-	}
-
-	private void addRecordStatus(MigrateBinaryInfo migrateBinary, DataRecordGroup dataRecordGroup) {
-		addAtomicValueToDataGroup("status", migrateBinary.status, dataRecordGroup);
-	}
-
-	private void addNumberOfProcessedRecords(MigrateBinaryInfo migrateBinary,
-			DataRecordGroup dataRecordGroup) {
-		long numOfProcessedRecords = migrateBinary.numberOfProcessedRecords;
-		addAtomicValueToDataGroup(NUM_OF_PROCESSED_RECORDS, String.valueOf(numOfProcessedRecords),
-				dataRecordGroup);
-	}
-
-	private void addTotalNumberToIndex(MigrateBinaryInfo migrateBinary,
-			DataRecordGroup dataRecordGroup) {
-		long totalNumberToIndex = migrateBinary.totalNumberToProcess;
-		addAtomicValueToDataGroup("totalNumberToIndex", String.valueOf(totalNumberToIndex),
-				dataRecordGroup);
-	}
-
-	private void possiblyAddFilter(DataRecordGroup dataRecordGroup, DataGroup filterAsDataGroup) {
-		if (filterAsDataGroup.hasChildren()) {
-			dataRecordGroup.addChild(filterAsDataGroup);
-		}
-	}
 }
