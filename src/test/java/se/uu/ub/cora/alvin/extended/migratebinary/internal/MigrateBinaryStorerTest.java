@@ -22,13 +22,15 @@ package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertSame;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import se.uu.ub.cora.alvin.spies.spider.DataGroupTermCollectorSpy;
+import se.uu.ub.cora.alvin.spies.spider.DataRecordLinkCollectorSpy;
+import se.uu.ub.cora.alvin.spies.spider.RecordTypeHandlerSpy;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.collected.CollectTerms;
@@ -45,19 +47,25 @@ public class MigrateBinaryStorerTest {
 	private DataRecordGroupHandlerForMigrateBinarySpy dataRecordGroupHandlerForMigrateBinarySpy;
 	private DataFactorySpy dataFactory;
 	private MigrateBinaryStorer storer;
+	private RecordTypeHandlerSpy recordTypeHandlerSpy;
 
 	@BeforeMethod
 	public void setUp() {
 		dataFactory = new DataFactorySpy();
 		DataProvider.onlyForTestSetDataFactory(dataFactory);
-
+		recordTypeHandlerSpy = new RecordTypeHandlerSpy();
 		recordStorage = new RecordStorageSpy();
 		termCollector = new DataGroupTermCollectorSpy();
 		linkCollector = new DataRecordLinkCollectorSpy();
-		dependencyProvider = new SpiderDependencyProviderOldSpy();
-		dependencyProvider.recordStorage = recordStorage;
-		dependencyProvider.termCollector = termCollector;
-		dependencyProvider.linkCollector = linkCollector;
+		dependencyProvider = new SpiderDependencyProviderSpy();
+		dependencyProvider.MRV.setDefaultReturnValuesSupplier(
+				"getRecordTypeHandlerUsingDataRecordGroup", () -> recordTypeHandlerSpy);
+		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordStorage",
+				() -> recordStorage);
+		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getDataGroupTermCollector",
+				() -> termCollector);
+		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getDataRecordLinkCollector",
+				() -> linkCollector);
 
 		dataRecordGroupHandlerForMigrateBinarySpy = new DataRecordGroupHandlerForMigrateBinarySpy();
 
@@ -90,7 +98,7 @@ public class MigrateBinaryStorerTest {
 
 		Map<String, Object> parameters = termCollector.MCR
 				.getParametersForMethodAndCallNumber("collectTerms", 0);
-		String metadataIdFromTypeHandler = (String) dependencyProvider.recordTypeHandlerSpy.MCR
+		String metadataIdFromTypeHandler = (String) recordTypeHandlerSpy.MCR
 				.getReturnValue("getDefinitionId", 0);
 		assertEquals(parameters.get("metadataId"), metadataIdFromTypeHandler);
 		assertSame(parameters.get("dataRecordGroup"), recordStorage.MCR.getReturnValue("read", 0));
@@ -105,7 +113,7 @@ public class MigrateBinaryStorerTest {
 	public void testCorrectCallToLinkCollector() {
 		storer.store(migrateBinary);
 
-		String metadataIdFromTypeHandler = (String) dependencyProvider.recordTypeHandlerSpy.MCR
+		String metadataIdFromTypeHandler = (String) recordTypeHandlerSpy.MCR
 				.getReturnValue("getDefinitionId", 0);
 		var readMigrateBinary = recordStorage.MCR.getReturnValue("read", 0);
 		var convertedMigrateBinary = dataFactory.MCR
@@ -144,16 +152,7 @@ public class MigrateBinaryStorerTest {
 	}
 
 	private void createDefaultMigrateBinary() {
-		migrateBinary = new MigrateBinaryInfo("someRecordType");
-		migrateBinary.numberOfProcessedRecords = 80;
-		migrateBinary.batchRecordId = "someRecordId";
-		createAndAddErrors();
+		migrateBinary = new MigrateBinaryInfo("someRecordId", List.of("2", "45"));
 	}
 
-	private void createAndAddErrors() {
-		List<Error> errors = new ArrayList<>();
-		errors.add(new Error("someId3", "Error while indexing"));
-		errors.add(new Error("someId89", "IOException while indexing"));
-		migrateBinary.errors.addAll(errors);
-	}
 }

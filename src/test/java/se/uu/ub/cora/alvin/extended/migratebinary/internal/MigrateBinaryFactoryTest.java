@@ -30,18 +30,24 @@ import se.uu.ub.cora.alvin.batch.BatchRunnerFactory;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
+import se.uu.ub.cora.storage.spies.RecordStorageSpy;
 
 public class MigrateBinaryFactoryTest {
 	private DataFactorySpy dataFactorySpy;
 	private SpiderDependencyProviderSpy dependencyProvider;
+	private RecordStorageSpy recordStorage;
 
 	@Test
 	public void testFactor() {
 		dataFactorySpy = new DataFactorySpy();
+		recordStorage = new RecordStorageSpy();
 		DataProvider.onlyForTestSetDataFactory(dataFactorySpy);
 		dependencyProvider = new SpiderDependencyProviderSpy();
+		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordStorage",
+				() -> recordStorage);
 		BatchRunnerFactory factory = new BatchRunnerFactoryImp(dependencyProvider);
-		MigrateBinaryInfo migrateBinary = new MigrateBinaryInfo("someRecordType", List.of("23", "45"));
+		MigrateBinaryInfo migrateBinary = new MigrateBinaryInfo("someRecordType",
+				List.of("23", "45"));
 
 		MigrateBinaryRunner runner = (MigrateBinaryRunner) factory.factor(migrateBinary);
 
@@ -52,7 +58,8 @@ public class MigrateBinaryFactoryTest {
 	}
 
 	private void assertCorrectMigrateBinaryStorer(MigrateBinaryRunner runner) {
-		MigrateBinaryStorerImp migrateInfoStorer = (MigrateBinaryStorerImp) runner.getMigrateBinaryStorer();
+		MigrateBinaryStorerImp migrateInfoStorer = (MigrateBinaryStorerImp) runner
+				.getMigrateBinaryStorer();
 		assertTrue(migrateInfoStorer instanceof MigrateBinaryStorerImp);
 		assertTrue(migrateInfoStorer
 				.getDataGroupHandlerForMigrateBinary() instanceof DataRecordGroupHandlerForMigrateBinaryImp);

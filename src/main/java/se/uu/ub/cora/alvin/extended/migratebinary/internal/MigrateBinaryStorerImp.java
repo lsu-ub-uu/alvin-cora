@@ -36,7 +36,7 @@ public class MigrateBinaryStorerImp implements MigrateBinaryStorer {
 	private MigrateBinaryInfo migrateBinaryInfo;
 	private SpiderDependencyProvider dependencyProvider;
 	private RecordStorage recordStorage;
-	private static final String INDEX_BATCH_JOB = "migrateBinary";
+	private static final String MIGRATE_BINARY = "migrateBinary";
 	private DataRecordGroupHandlerForMigrateBinary dataGroupHandlerForMigrateBinary;
 
 	public MigrateBinaryStorerImp(SpiderDependencyProvider dependencyProvider,
@@ -55,7 +55,7 @@ public class MigrateBinaryStorerImp implements MigrateBinaryStorer {
 	}
 
 	private DataRecordGroup completeStoredDataGroup(MigrateBinaryInfo migrateBinaryInfo) {
-		DataRecordGroup dataRecordGroup = recordStorage.read(INDEX_BATCH_JOB,
+		DataRecordGroup dataRecordGroup = recordStorage.read(MIGRATE_BINARY,
 				migrateBinaryInfo.batchRecordId);
 		dataGroupHandlerForMigrateBinary.updateDataRecordGroup(migrateBinaryInfo, dataRecordGroup);
 		return dataRecordGroup;
@@ -69,7 +69,7 @@ public class MigrateBinaryStorerImp implements MigrateBinaryStorer {
 		Set<Link> collectedLinks = collectLinks(metadataId, groupFromRecordGroup);
 		String dataDivider = completedDataRecordGroup.getDataDivider();
 
-		recordStorage.update(INDEX_BATCH_JOB, migrateBinaryInfo.batchRecordId, groupFromRecordGroup,
+		recordStorage.update(MIGRATE_BINARY, migrateBinaryInfo.batchRecordId, groupFromRecordGroup,
 				collectedTerms.storageTerms, collectedLinks, dataDivider);
 	}
 

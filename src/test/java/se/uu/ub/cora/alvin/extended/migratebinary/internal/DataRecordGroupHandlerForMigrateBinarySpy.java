@@ -19,7 +19,6 @@
  */
 package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 
-import se.uu.ub.cora.data.DataGroup;
 import se.uu.ub.cora.data.DataRecordGroup;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
 import se.uu.ub.cora.testutils.mcr.MethodCallRecorder;
@@ -41,10 +40,4 @@ public class DataRecordGroupHandlerForMigrateBinarySpy
 		MCR.addCall("migrateBinaryInfo", migrateBinaryInfo, "dataRecordGroup", dataRecordGroup);
 	}
 
-	@Override
-	public DataRecordGroup createDataRecordGroup(MigrateBinaryInfo migrateBinaryInfo,
-			DataGroup filterAsDataGroup) {
-		return (DataRecordGroup) MCR.addCallAndReturnFromMRV("migrateBinary", migrateBinaryInfo,
-				"filterAsDataGroup", filterAsDataGroup);
-	}
 }

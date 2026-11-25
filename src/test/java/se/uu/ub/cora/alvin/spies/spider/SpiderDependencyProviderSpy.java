@@ -32,10 +32,13 @@ public class SpiderDependencyProviderSpy implements SpiderDependencyProvider {
 	public MethodCallRecorder MCR = new MethodCallRecorder();
 	public MethodReturnValues MRV = new MethodReturnValues();
 
+	public SpiderDependencyProviderSpy() {
+		MCR.useMRV(MRV);
+	}
+
 	@Override
 	public RecordStorage getRecordStorage() {
-		// TODO Auto-generated method stub
-		return null;
+		return (RecordStorage) MCR.addCallAndReturnFromMRV();
 	}
 
 	@Override
@@ -64,14 +67,12 @@ public class SpiderDependencyProviderSpy implements SpiderDependencyProvider {
 
 	@Override
 	public DataRecordLinkCollector getDataRecordLinkCollector() {
-		// TODO Auto-generated method stub
-		return null;
+		return (DataRecordLinkCollector) MCR.addCallAndReturnFromMRV();
 	}
 
 	@Override
 	public DataGroupTermCollector getDataGroupTermCollector() {
-		// TODO Auto-generated method stub
-		return null;
+		return (DataGroupTermCollector) MCR.addCallAndReturnFromMRV();
 	}
 
 	@Override
@@ -119,8 +120,7 @@ public class SpiderDependencyProviderSpy implements SpiderDependencyProvider {
 	@Override
 	public RecordTypeHandler getRecordTypeHandlerUsingDataRecordGroup(
 			DataRecordGroup dataRecordGroup) {
-		// TODO Auto-generated method stub
-		return null;
+		return (RecordTypeHandler) MCR.addCallAndReturnFromMRV("dataRecordGroup", dataRecordGroup);
 	}
 
 	@Override
