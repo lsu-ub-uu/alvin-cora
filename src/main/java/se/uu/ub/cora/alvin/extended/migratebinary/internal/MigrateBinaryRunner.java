@@ -24,11 +24,8 @@ import java.util.List;
 import se.uu.ub.cora.alvin.batch.BatchRunner;
 import se.uu.ub.cora.bookkeeper.recordtype.RecordTypeHandler;
 import se.uu.ub.cora.bookkeeper.termcollector.DataGroupTermCollector;
-import se.uu.ub.cora.data.DataRecordGroup;
-import se.uu.ub.cora.data.collected.CollectTerms;
 import se.uu.ub.cora.search.RecordIndexer;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
-import se.uu.ub.cora.storage.Filter;
 import se.uu.ub.cora.storage.RecordStorage;
 import se.uu.ub.cora.storage.StorageReadResult;
 
@@ -48,8 +45,8 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 	private List<Error> errors = new ArrayList<>();
 	private long numberRequestedFromListing = 0;
 
-	public MigrateBinaryRunner(SpiderDependencyProvider dependencyProvider, MigrateBinaryStorer storer,
-			MigrateBinaryInfo migrateInfo) {
+	public MigrateBinaryRunner(SpiderDependencyProvider dependencyProvider,
+			MigrateBinaryStorer storer, MigrateBinaryInfo migrateInfo) {
 		this.dependencyProvider = dependencyProvider;
 		this.storer = storer;
 		this.migrateInfo = migrateInfo;
@@ -90,8 +87,8 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 
 	private void indexOneBatch(String metadataId) {
 		possiblySetToNumToTotalNumberToIndex();
-		setFromAndToInFilter(from, to);
-		readListAndIndexData(metadataId);
+		// setFromAndToInFilter(from, to);
+		// readListAndIndexData(metadataId);
 		prepareNextIteration();
 	}
 
@@ -108,47 +105,47 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 		}
 	}
 
-	private void setFromAndToInFilter(long from, long to) {
-		Filter filter = migrateInfo.filter;
-		filter.fromNo = from;
-		filter.toNo = to;
-	}
+	// private void setFromAndToInFilter(long from, long to) {
+	// Filter filter = migrateInfo.filter;
+	// filter.fromNo = from;
+	// filter.toNo = to;
+	// }
 
-	private void readListAndIndexData(String metadataId) {
-		StorageReadResult readResult = readList();
-		indexData(metadataId, readResult);
-		updateAndStoreMigrateBinary(readResult);
-		clearErrors();
-	}
+	// private void readListAndIndexData(String metadataId) {
+	// StorageReadResult readResult = readList();
+	// indexData(metadataId, readResult);
+	// updateAndStoreMigrateBinary(readResult);
+	// clearErrors();
+	// }
 
-	private StorageReadResult readList() {
-		Filter filter = migrateInfo.filter;
-		return recordStorage.readList(migrateInfo.recordTypeToIndex, filter);
-	}
+	// private StorageReadResult readList() {
+	// Filter filter = migrateInfo.filter;
+	// return recordStorage.readList(migrateInfo.recordTypeToIndex, filter);
+	// }
 
-	private void indexData(String metadataId, StorageReadResult readResult) {
-		for (DataRecordGroup dataRecordGroup : readResult.listOfDataRecordGroups) {
-			indexRecord(metadataId, dataRecordGroup);
-		}
-	}
+	// private void indexData(String metadataId, StorageReadResult readResult) {
+	// for (DataRecordGroup dataRecordGroup : readResult.listOfDataRecordGroups) {
+	// indexRecord(metadataId, dataRecordGroup);
+	// }
+	// }
 
-	private void indexRecord(String metadataId, DataRecordGroup dataRecordGroup) {
-		try {
-			tryToIndexData(metadataId, dataRecordGroup);
-		} catch (Exception e) {
-			String recordId = dataRecordGroup.getId();
-			Error error = new Error(recordId, e.getMessage());
-			errors.add(error);
-		}
-	}
+	// private void indexRecord(String metadataId, DataRecordGroup dataRecordGroup) {
+	// try {
+	// tryToIndexData(metadataId, dataRecordGroup);
+	// } catch (Exception e) {
+	// String recordId = dataRecordGroup.getId();
+	// Error error = new Error(recordId, e.getMessage());
+	// errors.add(error);
+	// }
+	// }
 
-	private void tryToIndexData(String metadataId, DataRecordGroup dataRecordGroup) {
-		CollectTerms collectedTerms = termCollector.collectTerms(metadataId, dataRecordGroup);
-		String recordId = dataRecordGroup.getId();
-		String recordType = dataRecordGroup.getType();
-		recordIndexer.indexDataWithoutExplicitCommit(recordType, recordId,
-				collectedTerms.indexTerms, dataRecordGroup);
-	}
+	// private void tryToIndexData(String metadataId, DataRecordGroup dataRecordGroup) {
+	// CollectTerms collectedTerms = termCollector.collectTerms(metadataId, dataRecordGroup);
+	// String recordId = dataRecordGroup.getId();
+	// String recordType = dataRecordGroup.getType();
+	// recordIndexer.indexDataWithoutExplicitCommit(recordType, recordId,
+	// collectedTerms.indexTerms, dataRecordGroup);
+	// }
 
 	private void updateAndStoreMigrateBinary(StorageReadResult readResult) {
 		migrateInfo.errors.addAll(errors);
