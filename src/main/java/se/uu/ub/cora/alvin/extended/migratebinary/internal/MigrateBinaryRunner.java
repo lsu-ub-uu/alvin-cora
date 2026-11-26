@@ -70,16 +70,16 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 		System.err.println("TRAMS" + migrateInfo);
 
 		// räv
-		// HttpHandler httpHandler = httpHandlerFactory.factor(
-		// "https://www.alvin-portal.org/alvin/attachment/download/alvin-record:95599/ATTACHMENT-0001.tiff");
-		// vill du läsa
 		HttpHandler httpHandler = httpHandlerFactory.factor(
-				"https://www.alvin-portal.org/alvin/attachment/download/alvin-record:631044/ATTACHMENT-0001.tiff");
+				"https://www.alvin-portal.org/alvin/attachment/download/alvin-record:95599/ATTACHMENT-0001.tiff");
+		// vill du läsa
+		// HttpHandler httpHandler = httpHandlerFactory.factor(
+		// "https://www.alvin-portal.org/alvin/attachment/download/alvin-record:631044/ATTACHMENT-0001.tiff");
 		InputStream responseBinary = httpHandler.getResponseBinary();
 
 		Uploader uploader = SpiderInstanceProvider.getUploader();
 
-		uploader.uploadSpike("121212", "binary", "2", responseBinary, "master");
+		uploader.uploadSpike(migrateInfo.userId, "binary", "2", responseBinary, "master");
 		// HttpMultiPartUploader httpHandlerUpload =
 		// httpHandlerFactory.factorHttpMultiPartUploader();
 		// addStreamInfoToHttpHandler(httpHandler);

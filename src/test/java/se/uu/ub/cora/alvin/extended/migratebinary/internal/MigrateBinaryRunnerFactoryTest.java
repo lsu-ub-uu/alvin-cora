@@ -40,12 +40,14 @@ public class MigrateBinaryRunnerFactoryTest {
 	private RecordStorageSpy recordStorage;
 	private MigrateBinaryInfo migrateInfo;
 	private BatchRunnerFactory factory;
+	private String userId;
 
 	@BeforeMethod
 	public void beforeMethod() {
 		setUpDataProvider();
 		setUpDependencyProvider();
-		migrateInfo = new MigrateBinaryInfo("someRecordType", List.of("23", "45"));
+		userId = "someUserId";
+		migrateInfo = new MigrateBinaryInfo("someRecordType", List.of("23", "45"), userId);
 		factory = new MigrateBinaryRunnerFactoryImp(dependencyProvider);
 	}
 

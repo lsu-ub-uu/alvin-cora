@@ -46,8 +46,10 @@ public class MigrateExtendedFunctionality implements ExtendedFunctionality {
 	private MigrateBinaryInfo fecthInfoFromCompleteExtendedFunctionallity(
 			ExtendedFunctionalityData data) {
 		DataRecordGroup dataRecordGroup = data.dataRecordGroup;
+
 		List<String> recordIds = (List<String>) data.dataSharer.get("MigrateBinary_recordIds");
-		return new MigrateBinaryInfo(dataRecordGroup.getId(), recordIds);
+		String userId = data.user.id;
+		return new MigrateBinaryInfo(dataRecordGroup.getId(), recordIds, userId);
 	}
 
 	public SpiderDependencyProvider onlyForTestGetDependencyProvider() {

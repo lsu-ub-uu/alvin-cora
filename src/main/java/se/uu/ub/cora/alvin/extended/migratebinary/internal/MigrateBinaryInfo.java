@@ -31,10 +31,12 @@ public class MigrateBinaryInfo {
 	public long amountOfMigratedData = 0;
 	public String status = "started";
 	public List<Error> errors = new ArrayList<>();
+	public String userId;
 
-	public MigrateBinaryInfo(String batchRecordId, List<String> recordIds) {
+	public MigrateBinaryInfo(String batchRecordId, List<String> recordIds, String userId) {
 		this.batchRecordId = batchRecordId;
 		this.recordIds = recordIds;
+		this.userId = userId;
 		this.totalNumberToProcess = recordIds.size();
 	}
 }

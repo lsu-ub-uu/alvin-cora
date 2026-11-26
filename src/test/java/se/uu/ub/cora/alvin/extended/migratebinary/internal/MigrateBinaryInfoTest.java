@@ -30,25 +30,28 @@ public class MigrateBinaryInfoTest {
 	private MigrateBinaryInfo migrateInfo;
 	private List<String> recordIds;
 	private String batchRecordId;
+	private String userId;
 
 	@BeforeMethod
 	public void beforeMethod() {
 		batchRecordId = "someBatchRecordId";
 		recordIds = List.of("1", "44");
+		userId = "someUserId";
 
-		migrateInfo = new MigrateBinaryInfo(batchRecordId, recordIds);
+		migrateInfo = new MigrateBinaryInfo(batchRecordId, recordIds, userId);
 	}
 
 	@Test
 	public void testValuesSetFromConstructor() {
 		assertEquals(migrateInfo.batchRecordId, batchRecordId);
 		assertEquals(migrateInfo.totalNumberToProcess, recordIds.size());
+		assertEquals(migrateInfo.userId, userId);
+
 		assertEquals(migrateInfo.numberOfProcessedRecords, 0);
 		assertEquals(migrateInfo.status, "started");
 		assertEquals(migrateInfo.errors, Collections.EMPTY_LIST);
 		assertEquals(migrateInfo.numberOfMigratedBinaries, 0);
 		assertEquals(migrateInfo.amountOfMigratedData, 0);
-
 	}
 
 	@Test

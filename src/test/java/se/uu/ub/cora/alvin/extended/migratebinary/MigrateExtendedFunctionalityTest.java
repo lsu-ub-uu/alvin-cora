@@ -30,6 +30,7 @@ import se.uu.ub.cora.alvin.batch.MigrateBatchHandler;
 import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBatchHandlerSpy;
 import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryInfo;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
+import se.uu.ub.cora.beefeater.authentication.User;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
@@ -67,6 +68,7 @@ public class MigrateExtendedFunctionalityTest {
 		dataRecordGroup = new DataRecordGroupSpy();
 		data = new ExtendedFunctionalityData();
 		data.dataRecordGroup = dataRecordGroup;
+		data.user = new User("someUserId");
 
 		dataRecordGroup.MRV.setSpecificReturnValuesSupplier("getId", () -> "someRecordId");
 
@@ -79,14 +81,16 @@ public class MigrateExtendedFunctionalityTest {
 
 		batchHandler.MCR.assertMethodWasCalled("runMigrateBinary");
 		MigrateBinaryInfo migrateInfo = (MigrateBinaryInfo) batchHandler.MCR
-				.getParameterForMethodAndCallNumberAndParameter("runMigrateBinary", 0, "migrateInfo");
+				.getParameterForMethodAndCallNumberAndParameter("runMigrateBinary", 0,
+						"migrateInfo");
 
-		assertMigrateBinary(migrateInfo);
+		assertMigrateBinaryInfo(migrateInfo);
 	}
 
-	private void assertMigrateBinary(MigrateBinaryInfo migrateInfo) {
+	private void assertMigrateBinaryInfo(MigrateBinaryInfo migrateInfo) {
 		assertEquals(migrateInfo.batchRecordId, "someRecordId");
 		assertEquals(migrateInfo.totalNumberToProcess, 2);
+		assertEquals(migrateInfo.userId, "someUserId");
 	}
 
 	@Test

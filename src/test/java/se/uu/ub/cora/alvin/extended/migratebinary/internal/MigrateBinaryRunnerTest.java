@@ -75,8 +75,9 @@ public class MigrateBinaryRunnerTest {
 	}
 
 	private void createDefaultParameters() {
+		String userId = "someUserId";
 		migrateBinaryFilter = new Filter();
-		migrateBinary = new MigrateBinaryInfo("someRecordId", List.of("asdfasdf"));
+		migrateBinary = new MigrateBinaryInfo("someRecordId", List.of("asdfasdf"), userId);
 		migrateBinary.totalNumberToProcess = TOTAL_NUMBER_TO_INDEX;
 	}
 
