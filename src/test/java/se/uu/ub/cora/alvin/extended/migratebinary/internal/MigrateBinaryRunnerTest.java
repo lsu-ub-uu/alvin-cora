@@ -30,6 +30,8 @@ import org.testng.annotations.Test;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataRecordGroup;
 import se.uu.ub.cora.data.spies.DataRecordGroupSpy;
+import se.uu.ub.cora.httphandler.HttpHandlerFactory;
+import se.uu.ub.cora.httphandler.spies.HttpHandlerFactorySpy;
 import se.uu.ub.cora.logger.LoggerProvider;
 import se.uu.ub.cora.logger.spies.LoggerFactorySpy;
 import se.uu.ub.cora.storage.Filter;
@@ -54,6 +56,7 @@ public class MigrateBinaryRunnerTest {
 	private int numberToReturnForReadList = 2;
 	private List<DataRecordGroup> listOfDataRecordGroups = new ArrayList<>();
 	// private RecordTypeHandlerSpy recordTypeHandlerSpy;
+	private HttpHandlerFactory httpHandlerFactory;
 
 	@BeforeMethod
 	public void setUp() {
@@ -61,7 +64,8 @@ public class MigrateBinaryRunnerTest {
 		createDefaultParameters();
 		setUpSpies();
 		storerSpy = new MigrateBinaryStorerSpy();
-		batchRunner = new MigrateBinaryRunner(dependencyProvider, storerSpy, migrateBinary);
+		batchRunner = new MigrateBinaryRunner(dependencyProvider, storerSpy, httpHandlerFactory,
+				migrateBinary);
 		lastLoopBeforeEnd = (migrateBinary.totalNumberToProcess / INDEX_BATCH_SIZE);
 	}
 
@@ -82,7 +86,7 @@ public class MigrateBinaryRunnerTest {
 		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordStorage",
 				() -> recordStorage);
 		recordStorage.MRV.setDefaultReturnValuesSupplier("readList", this::createSpiderReadResult);
-
+		httpHandlerFactory = new HttpHandlerFactorySpy();
 	}
 
 	private StorageReadResult createSpiderReadResult() {
@@ -113,9 +117,10 @@ public class MigrateBinaryRunnerTest {
 	public void testInit() {
 		assertTrue(batchRunner instanceof Runnable);
 
-		assertSame(batchRunner.getMigrateBinary(), migrateBinary);
-		assertSame(batchRunner.getDependencyProvider(), dependencyProvider);
-		assertSame(batchRunner.getMigrateBinaryStorer(), storerSpy);
+		assertSame(batchRunner.onlyForTestGetDependencyProvider(), dependencyProvider);
+		assertSame(batchRunner.onlyForTestGetMigrateBinaryStorer(), storerSpy);
+		assertSame(batchRunner.onlyForTestGetHttpHandlerFactory(), httpHandlerFactory);
+		assertSame(batchRunner.onlyForTestGetMigrateBinaryInfo(), migrateBinary);
 	}
 
 	// @Test

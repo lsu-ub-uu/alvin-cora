@@ -24,46 +24,61 @@ import static org.testng.Assert.assertTrue;
 
 import java.util.List;
 
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import se.uu.ub.cora.alvin.batch.BatchRunnerFactory;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.data.DataProvider;
 import se.uu.ub.cora.data.spies.DataFactorySpy;
+import se.uu.ub.cora.httphandler.HttpHandlerFactoryImp;
 import se.uu.ub.cora.storage.spies.RecordStorageSpy;
 
-public class MigrateBinaryFactoryTest {
+public class MigrateBinaryRunnerFactoryTest {
 	private DataFactorySpy dataFactorySpy;
 	private SpiderDependencyProviderSpy dependencyProvider;
 	private RecordStorageSpy recordStorage;
+	private MigrateBinaryInfo migrateInfo;
+	private BatchRunnerFactory factory;
 
-	@Test
-	public void testFactor() {
+	@BeforeMethod
+	public void beforeMethod() {
+		setUpDataProvider();
+		setUpDependencyProvider();
+		migrateInfo = new MigrateBinaryInfo("someRecordType", List.of("23", "45"));
+		factory = new MigrateBinaryRunnerFactoryImp(dependencyProvider);
+	}
+
+	private void setUpDataProvider() {
 		dataFactorySpy = new DataFactorySpy();
-		recordStorage = new RecordStorageSpy();
 		DataProvider.onlyForTestSetDataFactory(dataFactorySpy);
+	}
+
+	private void setUpDependencyProvider() {
+		recordStorage = new RecordStorageSpy();
 		dependencyProvider = new SpiderDependencyProviderSpy();
 		dependencyProvider.MRV.setDefaultReturnValuesSupplier("getRecordStorage",
 				() -> recordStorage);
-		BatchRunnerFactory factory = new BatchRunnerFactoryImp(dependencyProvider);
-		MigrateBinaryInfo migrateBinary = new MigrateBinaryInfo("someRecordType",
-				List.of("23", "45"));
-
-		MigrateBinaryRunner runner = (MigrateBinaryRunner) factory.factor(migrateBinary);
-
-		assertSame(runner.getMigrateBinary(), migrateBinary);
-		assertSame(runner.getDependencyProvider(), dependencyProvider);
-
-		assertCorrectMigrateBinaryStorer(runner);
 	}
 
-	private void assertCorrectMigrateBinaryStorer(MigrateBinaryRunner runner) {
+	@Test
+	public void testFactorSimpleDependencies() {
+		MigrateBinaryRunner runner = (MigrateBinaryRunner) factory.factor(migrateInfo);
+
+		assertSame(runner.onlyForTestGetDependencyProvider(), dependencyProvider);
+		assertTrue(runner.onlyForTestGetHttpHandlerFactory() instanceof HttpHandlerFactoryImp);
+		assertSame(runner.onlyForTestGetMigrateBinaryInfo(), migrateInfo);
+	}
+
+	@Test
+	public void testFactor_MigrateBinaryStorer() {
+		MigrateBinaryRunner runner = (MigrateBinaryRunner) factory.factor(migrateInfo);
+
 		MigrateBinaryStorerImp migrateInfoStorer = (MigrateBinaryStorerImp) runner
-				.getMigrateBinaryStorer();
+				.onlyForTestGetMigrateBinaryStorer();
 		assertTrue(migrateInfoStorer instanceof MigrateBinaryStorerImp);
 		assertTrue(migrateInfoStorer
 				.getDataGroupHandlerForMigrateBinary() instanceof DataRecordGroupHandlerForMigrateBinaryImp);
 		assertEquals(migrateInfoStorer.getDependencyProvider(), dependencyProvider);
 	}
-
 }

@@ -26,7 +26,7 @@ import se.uu.ub.cora.alvin.batch.BatchRunner;
 import se.uu.ub.cora.bookkeeper.recordtype.RecordTypeHandler;
 import se.uu.ub.cora.bookkeeper.termcollector.DataGroupTermCollector;
 import se.uu.ub.cora.httphandler.HttpHandler;
-import se.uu.ub.cora.httphandler.HttpHandlerFactoryImp;
+import se.uu.ub.cora.httphandler.HttpHandlerFactory;
 import se.uu.ub.cora.search.RecordIndexer;
 import se.uu.ub.cora.spider.binary.Uploader;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
@@ -49,11 +49,14 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 	private MigrateBinaryStorer storer;
 	private List<Error> errors = new ArrayList<>();
 	private long numberRequestedFromListing = 0;
+	private HttpHandlerFactory httpHandlerFactory;
 
 	public MigrateBinaryRunner(SpiderDependencyProvider dependencyProvider,
-			MigrateBinaryStorer storer, MigrateBinaryInfo migrateInfo) {
+			MigrateBinaryStorer storer, HttpHandlerFactory httpHandlerFactory,
+			MigrateBinaryInfo migrateInfo) {
 		this.dependencyProvider = dependencyProvider;
 		this.storer = storer;
+		this.httpHandlerFactory = httpHandlerFactory;
 		this.migrateInfo = migrateInfo;
 	}
 
@@ -65,15 +68,18 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 		// readListAndIndexDataInBatches(metadataId);
 		// updateMigrateBinaryAsFinished();
 		System.err.println("TRAMS" + migrateInfo);
-		HttpHandlerFactoryImp httpHandlerFactory = new HttpHandlerFactoryImp();
 
+		// räv
+		// HttpHandler httpHandler = httpHandlerFactory.factor(
+		// "https://www.alvin-portal.org/alvin/attachment/download/alvin-record:95599/ATTACHMENT-0001.tiff");
+		// vill du läsa
 		HttpHandler httpHandler = httpHandlerFactory.factor(
-				"https://www.alvin-portal.org/alvin/attachment/download/alvin-record:95599/ATTACHMENT-0001.tiff");
+				"https://www.alvin-portal.org/alvin/attachment/download/alvin-record:631044/ATTACHMENT-0001.tiff");
 		InputStream responseBinary = httpHandler.getResponseBinary();
 
 		Uploader uploader = SpiderInstanceProvider.getUploader();
 
-		uploader.uploadSpike("binary", "1", responseBinary, "master");
+		uploader.uploadSpike("121212", "binary", "2", responseBinary, "master");
 		// HttpMultiPartUploader httpHandlerUpload =
 		// httpHandlerFactory.factorHttpMultiPartUploader();
 		// addStreamInfoToHttpHandler(httpHandler);
@@ -252,15 +258,19 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 		storeMigrateBinary();
 	}
 
-	SpiderDependencyProvider getDependencyProvider() {
+	SpiderDependencyProvider onlyForTestGetDependencyProvider() {
 		return dependencyProvider;
 	}
 
-	MigrateBinaryInfo getMigrateBinary() {
-		return migrateInfo;
+	HttpHandlerFactory onlyForTestGetHttpHandlerFactory() {
+		return httpHandlerFactory;
 	}
 
-	MigrateBinaryStorer getMigrateBinaryStorer() {
+	MigrateBinaryStorer onlyForTestGetMigrateBinaryStorer() {
 		return storer;
+	}
+
+	MigrateBinaryInfo onlyForTestGetMigrateBinaryInfo() {
+		return migrateInfo;
 	}
 }

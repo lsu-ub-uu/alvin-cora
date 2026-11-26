@@ -27,7 +27,7 @@ import java.util.List;
 
 import se.uu.ub.cora.alvin.batch.BatchRunnerFactory;
 import se.uu.ub.cora.alvin.batch.MigrateBatchHandler;
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchRunnerFactoryImp;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryRunnerFactoryImp;
 import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBatchHandlerImp;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 import se.uu.ub.cora.spider.extendedfunctionality.ExtendedFunctionality;
@@ -75,7 +75,7 @@ public class MigrateExtendedFunctionalityFactory implements ExtendedFunctionalit
 	}
 
 	private List<ExtendedFunctionality> createRunMigrateBinary() {
-		BatchRunnerFactory batchRunnerFactory = new BatchRunnerFactoryImp(dependencyProvider);
+		BatchRunnerFactory batchRunnerFactory = new MigrateBinaryRunnerFactoryImp(dependencyProvider);
 		MigrateBatchHandler indexBatchHandler = MigrateBatchHandlerImp
 				.usingBatchRunnerFactory(batchRunnerFactory);
 		return Collections.singletonList(

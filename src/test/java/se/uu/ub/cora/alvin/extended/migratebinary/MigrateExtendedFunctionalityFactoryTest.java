@@ -31,7 +31,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import se.uu.ub.cora.alvin.extended.migratebinary.internal.BatchRunnerFactoryImp;
+import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBinaryRunnerFactoryImp;
 import se.uu.ub.cora.alvin.extended.migratebinary.internal.MigrateBatchHandlerImp;
 import se.uu.ub.cora.alvin.spies.spider.SpiderDependencyProviderSpy;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
@@ -107,7 +107,7 @@ public class MigrateExtendedFunctionalityFactoryTest {
 
 		assertSame(extFunctionality.onlyForTestGetDependencyProvider(), dependencyProvider);
 
-		BatchRunnerFactoryImp batchRunnerFactory = (BatchRunnerFactoryImp) indexBatchHandler
+		MigrateBinaryRunnerFactoryImp batchRunnerFactory = (MigrateBinaryRunnerFactoryImp) indexBatchHandler
 				.getBatchRunnerFactory();
 		SpiderDependencyProvider dependencyProvider2 = batchRunnerFactory.getDependencyProvider();
 		assertSame(dependencyProvider2, dependencyProvider);

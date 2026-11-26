@@ -20,21 +20,25 @@ package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 
 import se.uu.ub.cora.alvin.batch.BatchRunner;
 import se.uu.ub.cora.alvin.batch.BatchRunnerFactory;
+import se.uu.ub.cora.httphandler.HttpHandlerFactoryImp;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
 
-public class BatchRunnerFactoryImp implements BatchRunnerFactory {
+public class MigrateBinaryRunnerFactoryImp implements BatchRunnerFactory {
 
 	private SpiderDependencyProvider dependencyProvider;
 
-	public BatchRunnerFactoryImp(SpiderDependencyProvider dependencyProvider) {
+	public MigrateBinaryRunnerFactoryImp(SpiderDependencyProvider dependencyProvider) {
 		this.dependencyProvider = dependencyProvider;
 	}
 
 	@Override
 	public BatchRunner factor(MigrateBinaryInfo migrateInfo) {
+		DataRecordGroupHandlerForMigrateBinaryImp dataGroupHandlerForMigrateBinary = new DataRecordGroupHandlerForMigrateBinaryImp();
 		MigrateBinaryStorerImp migrateInfoStorer = new MigrateBinaryStorerImp(dependencyProvider,
-				new DataRecordGroupHandlerForMigrateBinaryImp());
-		return new MigrateBinaryRunner(dependencyProvider, migrateInfoStorer, migrateInfo);
+				dataGroupHandlerForMigrateBinary);
+		HttpHandlerFactoryImp httpHandlerFactory = new HttpHandlerFactoryImp();
+		return new MigrateBinaryRunner(dependencyProvider, migrateInfoStorer, httpHandlerFactory,
+				migrateInfo);
 	}
 
 	public SpiderDependencyProvider getDependencyProvider() {
