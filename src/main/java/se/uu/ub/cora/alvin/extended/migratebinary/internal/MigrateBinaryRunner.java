@@ -18,14 +18,19 @@
  */
 package se.uu.ub.cora.alvin.extended.migratebinary.internal;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import se.uu.ub.cora.alvin.batch.BatchRunner;
 import se.uu.ub.cora.bookkeeper.recordtype.RecordTypeHandler;
 import se.uu.ub.cora.bookkeeper.termcollector.DataGroupTermCollector;
+import se.uu.ub.cora.httphandler.HttpHandler;
+import se.uu.ub.cora.httphandler.HttpHandlerFactoryImp;
 import se.uu.ub.cora.search.RecordIndexer;
+import se.uu.ub.cora.spider.binary.Uploader;
 import se.uu.ub.cora.spider.dependency.SpiderDependencyProvider;
+import se.uu.ub.cora.spider.dependency.SpiderInstanceProvider;
 import se.uu.ub.cora.storage.RecordStorage;
 import se.uu.ub.cora.storage.StorageReadResult;
 
@@ -59,7 +64,75 @@ public class MigrateBinaryRunner implements BatchRunner, Runnable {
 		// ensureNumberOfIndexedIsZero();
 		// readListAndIndexDataInBatches(metadataId);
 		// updateMigrateBinaryAsFinished();
+		System.err.println("TRAMS" + migrateInfo);
+		HttpHandlerFactoryImp httpHandlerFactory = new HttpHandlerFactoryImp();
+
+		HttpHandler httpHandler = httpHandlerFactory.factor(
+				"https://www.alvin-portal.org/alvin/attachment/download/alvin-record:95599/ATTACHMENT-0001.tiff");
+		InputStream responseBinary = httpHandler.getResponseBinary();
+
+		Uploader uploader = SpiderInstanceProvider.getUploader();
+
+		uploader.uploadSpike("binary", "1", responseBinary, "master");
+		// HttpMultiPartUploader httpHandlerUpload =
+		// httpHandlerFactory.factorHttpMultiPartUploader();
+		// addStreamInfoToHttpHandler(httpHandler);
+		// httpHandler.done();
 	}
+	//
+	// public String testDownload() {
+	// RestResponse response = recordHandler.download(authToken, recordType, recordId,
+	// representation);
+	// statusType = Response.Status.fromStatusCode(response.responseCode());
+	//
+	// return response.responseText();
+	// }
+
+	// public String testUpload() throws IOException {
+	// String url = baseRecordUrl + type + "/" + id + "/master";
+	// url = addAuthTokenToUrl(url);
+	//
+	// HttpMultiPartUploader httpHandler = httpHandlerFactory.factorHttpMultiPartUploader(url);
+	// addStreamInfoToHttpHandler(httpHandler);
+	// httpHandler.done();
+	//
+	// statusType = Response.Status.fromStatusCode(httpHandler.getResponseCode());
+	// if (responseIsOk()) {
+	// String responseText = httpHandler.getResponseText();
+	// streamId = tryToFindStreamId(responseText);
+	// return responseText;
+	// }
+	// return httpHandler.getErrorText();
+	// }
+
+	// @Override
+	// public RestResponse download(String type, String id, String representation) {
+	// HttpHandler httpHandler = createHttpHandlerForDownload(type, id, representation);
+	// Supplier<RestResponse> methodToRetry = () -> download(type, id, representation);
+	// return handlDownloadResponseFromHttpHandlerUsingMethodToRetry(httpHandler, methodToRetry);
+	// }
+	//
+	// private HttpHandler createHttpHandlerForDownload(String type, String id,
+	// String representation) {
+	// String url = baseUrl + "record/" + type + "/" + id + "/" + representation;
+	// HttpHandler httpHandler = createHttpHandlerWithAuthTokenAndUrl(url);
+	// httpHandler.setRequestMethod("GET");
+	// return httpHandler;
+	// }
+	//
+	// private RestResponse handlDownloadResponseFromHttpHandlerUsingMethodToRetry(
+	// HttpHandler httpHandler, Supplier<RestResponse> methodToRetry) {
+	// if (responseIsOk(httpHandler)) {
+	// return composeDownloadResponseForOk(httpHandler);
+	// }
+	// return handleErrorResponses(httpHandler, methodToRetry);
+	// }
+	//
+	// private RestResponse composeDownloadResponseForOk(HttpHandler httpHandler) {
+	// InputStream responseBinary = httpHandler.getResponseBinary();
+	// return new RestResponse(httpHandler.getResponseCode(), "", Optional.of(responseBinary),
+	// Optional.empty());
+	// }
 
 	private void setNeededDependenciesInClass() {
 		recordStorage = dependencyProvider.getRecordStorage();

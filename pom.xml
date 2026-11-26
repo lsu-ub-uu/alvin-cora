@@ -37,9 +37,11 @@
 	<properties>
 		<logger.version>2.10.0</logger.version>
 		<coralog4j.version>2.18.0</coralog4j.version>
+		<httphandler.version>2.17.0</httphandler.version>
+		<httphandler-spies.version>1.7.0</httphandler-spies.version>
 		<json.version>3.11.0</json.version>
 		<initialize.version>1.8.0</initialize.version>
-		<spider.version>10.15.0</spider.version>
+		<spider.version>10.16-SNAPSHOT</spider.version>
 		<recordLock.version>1.1.0</recordLock.version>
 		<therest.version>13.8.0</therest.version>
 		<beefeater.version>4.0.0</beefeater.version>
@@ -57,7 +59,6 @@
 		<gatekeeperclient.version>4.11.0</gatekeeperclient.version>
 		<solrsearch.version>6.0.0</solrsearch.version>
 		<metacreator.version>5.18.0</metacreator.version>
-		<httphandler.version>2.17.0</httphandler.version>
 		<servlet-api.version>6.1.0</servlet-api.version>
 		<fedoraarchive.version>1.16.0</fedoraarchive.version>
 		<fedora.version>4.2.0</fedora.version> 
@@ -90,6 +91,17 @@
 			<artifactId>log4j</artifactId>
 			<version>${coralog4j.version}</version>
 			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>httphandler</artifactId>
+			<version>${httphandler.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>se.uu.ub.cora</groupId>
+			<artifactId>httphandler-spies</artifactId>
+			<version>${httphandler-spies.version}</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>se.uu.ub.cora</groupId>
@@ -206,12 +218,6 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
-			<groupId>se.uu.ub.cora</groupId>
-			<artifactId>httphandler</artifactId>
-			<version>${httphandler.version}</version>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
 			<groupId>jakarta.servlet</groupId>
 			<artifactId>jakarta.servlet-api</artifactId>
 			<version>${servlet-api.version}</version>
@@ -276,6 +282,5 @@
 			<version>${logger-spies.version}</version>
 			<scope>test</scope>
 		</dependency>
-		
 	</dependencies>
 </project>
