@@ -77,7 +77,7 @@ public class DataRecordGroupHandlerForMigrateBinaryTest {
 
 	private MigrateBinaryInfo createMigrateBinary() {
 		MigrateBinaryInfo newMigrateBinary = new MigrateBinaryInfo(SOME_MIGRATE_BINARY_RECORD_ID,
-				recordIds);
+				recordIds, "someUserId");
 		createAndAddErrors(newMigrateBinary);
 		return newMigrateBinary;
 	}

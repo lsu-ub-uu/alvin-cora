@@ -152,7 +152,7 @@ public class MigrateBinaryStorerTest {
 	}
 
 	private void createDefaultMigrateBinary() {
-		migrateBinary = new MigrateBinaryInfo("someRecordId", List.of("2", "45"));
+		migrateBinary = new MigrateBinaryInfo("someRecordId", List.of("2", "45"), "someUserId");
 	}
 
 }

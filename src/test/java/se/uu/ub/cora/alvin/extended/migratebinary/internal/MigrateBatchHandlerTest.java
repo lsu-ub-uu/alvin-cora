@@ -42,7 +42,8 @@ public class MigrateBatchHandlerTest {
 
 	@Test
 	public void testInit() throws InterruptedException {
-		MigrateBinaryInfo migrateInfo = new MigrateBinaryInfo("someRecordId", List.of("3423"));
+		MigrateBinaryInfo migrateInfo = new MigrateBinaryInfo("someRecordId", List.of("3423"),
+				"someUserId");
 
 		batchHandler.runMigrateBinary(migrateInfo);
 
